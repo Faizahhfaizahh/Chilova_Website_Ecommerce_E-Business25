@@ -1,0 +1,85 @@
+body {
+  padding-top: 80px;
+}
+
+.btn-login {
+  border-color: #e0540f;
+  color: #e0540f;
+}
+
+.btn-login:hover {
+  background-color: #e0540f;
+  color: white;
+  border-color: #e0540f;
+}
+
+/*Hero*/
+.hero {
+  position: relative;
+  height: 100vh;
+  background: url("images/hero-bg.jpg") no-repeat center center;
+  background-size: cover;
+}
+
+.hero .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* gelap 40%, bisa diubah */
+  z-index: 1;
+}
+
+.hero .container {
+  position: relative;
+  z-index: 2; /* teks tetap di atas overlay */
+}
+
+.chilova-hero {
+  color: #e0540f;
+}
+
+.btn-cta {
+  color: #e0540f;
+  width: 160px;
+}
+
+.btn-cta:hover {
+  background-color: #e0540f;
+  color: white;
+  border-color: #e0540f;
+}
+
+/*Product Card*/
+.product .card-img-top {
+  height: 350px;
+  object-fit: cover; /* menyesuaikan area card */
+}
+
+.btn-view-more {
+  background-color: #e0540f;
+  border-color: #e0540f;
+  color: white;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.btn-view-more:hover {
+  background-color: #c04a0d;
+  border-color: #c04a0d;
+  color: #fff;
+  transform: translateX(5px); /* Geser ke kanan*/
+}
+
+/*About Us*/
+/* .about-img {
+    height: auto;
+    max-height: 400px;
+    width: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+} */
+
+
+
