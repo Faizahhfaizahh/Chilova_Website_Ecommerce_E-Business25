@@ -26,7 +26,7 @@
     </style>
 </head>
 <body>
-    <div class="card shadow-lg border-0 rounded-4 p-2" style="max-width: 1100px; margin: 50px auto; max-height:1100px;">
+    <div class="card shadow-lg border-0 rounded-4 p-2 align-items-center" style="max-width: 1100px; margin: 50px auto; max-height:1100px;">
         <div class="container px-3">
         <div class="row align-items-center">
             <div class="col-md-6">
@@ -47,14 +47,14 @@
                     <a href="registrasi.php">Sign Up</a>
                 </div>
                 <!-- Button Login -->
-                <div class="d-grid gap-2 col-6 mx-auto mt-3">
-                    <button class="btn btn-sign-in" type="submit">Login</button>
+                <div class="d-grid gap-2 col-6 mx-auto mt-3 " >
+                    <button class="btn btn-sign-in mb-3" type="submit">Login</button>
                 </div>
             </div>
             <div class="col-md-6 p-0">
                 <!-- Gambar/visual -->
-                <img src="images/img-product.png" alt="About Chilova" class="rounded shadow-sm" 
-                            style="height: 480px; width:100%; object-fit: cover; border-radius:10px;">
+                <img src="images/img-product.png" alt="About Chilova" class="img-fluid rounded shadow-sm" 
+                            style="height: 500px; width:100%; object-fit: cover; border-radius:10px;">
             </div>
         </div>
     </div>

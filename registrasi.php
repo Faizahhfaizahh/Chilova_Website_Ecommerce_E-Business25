@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Create Account</title>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -48,13 +48,13 @@
                 </div>
                 <!-- Button Login -->
                 <div class="d-grid gap-2 col-6 mx-auto mt-3">
-                    <button class="btn btn-sign-up" type="submit">Sign Up</button>
+                    <button class="btn btn-sign-up mb-3" type="submit">Sign Up</button>
                 </div>
             </div>
             <div class="col-md-6 p-0">
                 <!-- Gambar/visual -->
                 <img src="images/img-product.png" alt="About Chilova" class="rounded shadow-sm" 
-                            style="height: 480px; width:100%; object-fit: cover; border-radius:10px;">
+                            style="height: 500px; width:100%; object-fit: cover; border-radius:10px;">
             </div>
         </div>
     </div>

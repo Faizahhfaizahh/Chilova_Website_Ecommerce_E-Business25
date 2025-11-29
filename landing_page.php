@@ -47,7 +47,7 @@
                 </ul>
                 <!-- Button Login -->
                 <div class="ms-lg-auto">
-                    <button class="btn btn-outline-success btn-login" style="width: 120px;" type="button">Login</button>
+                    <button class="btn btn-outline-success btn-login" style="width: 120px;" type="button" onclick="window.location.href='login.php'" >Login</button>
                 </div>
             </div>
         </div>
