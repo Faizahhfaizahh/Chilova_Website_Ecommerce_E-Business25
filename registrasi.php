@@ -48,7 +48,7 @@
                 </div>
                 <!-- Button Login -->
                 <div class="d-grid gap-2 col-6 mx-auto mt-3">
-                    <button class="btn btn-sign-up mb-3" type="submit">Sign Up</button>
+                    <button class="btn btn-sign-up mb-3" type="submit" onclick="window.location.href='beranda.php'">Sign Up</button>
                 </div>
             </div>
             <div class="col-md-6 p-0">

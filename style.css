@@ -1,7 +1,3 @@
-body {
-  padding-top: 80px;
-}
-
 .btn-login {
   border-color: #e0540f;
   color: #e0540f;
@@ -72,15 +68,6 @@ body {
   transform: translateX(5px); /* Geser ke kanan*/
 }
 
-/*About Us*/
-/* .about-img {
-    height: auto;
-    max-height: 400px;
-    width: 100%;
-    object-fit: contain;
-    border-radius: 10px;
-} */
-
 /* Login Page */
 .btn.btn-sign-in {
   background-color: #e0540f !important;
@@ -96,3 +83,19 @@ body {
   color: #fff !important;
   border-radius: 10px !important;
 }
+
+/* Beranda page */
+/* .banner {
+  position: relative;
+  height: 100vh;
+  background: url("images/banner2.png") no-repeat center center;
+  background-size: cover;
+  background-position: center;
+} 
+
+.banner .container {
+  position: relative;
+  top: 50%;           
+  transform: translateY(-50%);
+  z-index: 2;
+} */
