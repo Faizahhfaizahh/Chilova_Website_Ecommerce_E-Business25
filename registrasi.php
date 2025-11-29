@@ -31,7 +31,7 @@
         <div class="row align-items-center">
             <div class="col-md-6">
                 <h4 class="mb-5" style="color:#e0540f">Chilova</h4>
-                <h5 class="mb-4">Login</h5>
+                <h5 class="mb-4">Create An Account</h5>
                 <!-- Form login -->
                 <div class="mb-3">
                     <label for="formGroupExampleInput" class="form-label">Username</label>
@@ -43,12 +43,12 @@
                 </div>
                 <!-- Link ke Create account -->
                 <div class="d-flex align-items-center">
-                    <p class="mb-0 me-2">Don't have an account?</p>
-                    <a href="registrasi.php">Sign Up</a>
+                    <p class="mb-0 me-2">Already have an account?</p>
+                    <a href="login.php">Login</a>
                 </div>
                 <!-- Button Login -->
                 <div class="d-grid gap-2 col-6 mx-auto mt-3">
-                    <button class="btn btn-sign-in" type="submit">Login</button>
+                    <button class="btn btn-sign-up" type="submit">Sign Up</button>
                 </div>
             </div>
             <div class="col-md-6 p-0">

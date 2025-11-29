@@ -113,7 +113,6 @@
                 <div class="col-md-6 text-center mb-4 mb-md-0">
                     <img src="images/img-product.png" alt="About Chilova" class="rounded shadow-sm" 
                         style="height: 480px; width:100%; object-fit: cover; border-radius:10px;">
-
                 </div>
                 <!-- Description -->
                 <div class="col-md-6">
