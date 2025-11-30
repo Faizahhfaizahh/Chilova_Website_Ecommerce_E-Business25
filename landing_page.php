@@ -47,14 +47,14 @@
                 </ul>
                 <!-- Button Login -->
                 <div class="ms-lg-auto">
-                    <button class="btn btn-outline-success btn-login" style="width: 120px;" type="button" onclick="window.location.href='login.php'" >Login</button>
+                    <button class="btn btn-login" style="width: 120px;" type="button" onclick="window.location.href='login.php'" >Login</button>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Hero -->
-    <section class="hero text-center text-white" id="home">
+    <section class="hero text-center text-white" id="home" style="margin-top: 70px;">
         <div class="overlay"></div>
         <div class="container d-flex flex-column justify-content-center align-items-center h-100">
             <h1 class="display-3 fw-bold">Welcome to <span class="chilova-hero">Chilova</span> Website</h1>
