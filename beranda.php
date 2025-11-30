@@ -72,6 +72,39 @@
         top: -120px;
     }
 
+    .produk-section {
+        padding: 50px 20px;
+        background-color: #fff8e6;
+    }
+
+    .produk-card {
+        background: #FFE7A0;
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        transition: 0.2s;
+        max-width: 350px;
+        margin: auto;
+    }
+
+    .produk-card:hover {
+        transform: scale(1.03);
+    }
+
+    .produk-card img {
+    max-height: 250px; 
+    object-fit: contain;
+  }
+
+    .btn-plus {
+        background-color: white;
+        border: none;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        font-size: 1.3rem;
+    }
+
     .btn-search {
       border: 1px solid #e0540f ;
       color: #e0540f ;
@@ -152,19 +185,19 @@
         <div class="collapse navbar-collapse d-lg-flex" id="navbarSupportedContent">
           <!-- Search -->
           <form class="d-flex mx-auto flex-grow-1" role="search" style="max-width: 600px;">
-            <input class="form-control me-2" type="search" placeholder="Cari produk chili oil mu" aria-label="Search"/>
+            <input id="searchInput" class="form-control me-2" type="search" placeholder="Cari produk chili oil mu" aria-label="Search"/>
             <button class="btn btn-search" type="submit">Search</button>
           </form>
 
           <!-- Icons -->
           <div class="d-flex align-items-center gap-3 ms-auto" >
             <!-- Cart -->
-            <a href="#" class="text-dark" style="font-size: 1.4rem;">
+            <a href="#" class="text-dark" style="font-size: 2rem;">
               <i class="bi bi-cart"></i>
             </a>
 
             <!-- User -->
-            <a href="#" class="text-dark" style="font-size: 1.4rem;">
+            <a href="profile.php" class="text-dark ms-3" style="font-size: 2rem;">
               <i class="bi bi-person-circle"></i>
             </a>
           </div>
@@ -179,7 +212,7 @@
         <div class="hero-text">
             <h1>Bikin Setiap Makan Jadi Lebih Istimewa Dengan Chilova</h1>
             <p>Sahabat setia semua hidangan</p>
-            <a href="#" class="btn btn-beli">Beli Sekarang</a>
+            <a href="#produk" class="btn btn-beli">Beli Sekarang</a>
         </div>
 
         <div class="hero-img-wrapper">
@@ -190,7 +223,140 @@
 </section>
 
 
+<!-- ===================== SECTION PRODUK ===================== -->
+<section id="produk" class="produk-section">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">Produk Chilova</h2>
 
+        <!-- FILTER VARIAN -->
+        <div class="mb-4">
+            <select id="filterVarian" class="form-select w-auto d-inline-block">
+                <option value="" selected disabled>Pilih Varian Rasa Chili Oil</option>
+                <option value="all">All varian</option>
+                <option value="original">Original</option>
+                <option value="daun-jeruk">Daun Jeruk</option>
+                <option value="lengkuas">Lengkuas</option>
+            </select>
+        </div>
+
+        <div class="row g-4">
+
+            <div class="col-12 col-md-6 varian original" data-varian="original">
+                <div class="produk-card">
+                    <img src="images/original.png" class="img-fluid mb-2">
+                    <h5 class="card-title text-danger fw-bold">Original</h5>
+                    <p class="mb-0">Ukuran 100 gram</p>
+                    <strong>Rp 12.000</strong>
+                    <button class="btn-plus mt-2">+</button>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 varian original" data-varian="original">
+                <div class="produk-card">
+                    <img src="images/original.png" class="img-fluid mb-2">
+                    <h5 class="card-title text-danger fw-bold">Original</h5>
+                    <p class="mb-0">Ukuran 150 gram</p>
+                    <strong>Rp 15.000</strong>
+                    <button class="btn-plus mt-2">+</button>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 varian daun-jeruk" data-varian="daun jeruk">
+                <div class="produk-card">
+                    <img src="images/daun jeruk.png" class="img-fluid mb-2">
+                    <h5 class="card-title text-success fw-bold">Daun Jeruk</h5>
+                    <p class="mb-0">Ukuran 100 gram</p>
+                    <strong>Rp 12.000</strong>
+                    <button class="btn-plus mt-2">+</button>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 varian daun-jeruk" data-varian="daun jeruk">
+                <div class="produk-card">
+                    <img src="images/daun jeruk.png" class="img-fluid mb-2">
+                    <h5 class="card-title text-success fw-bold">Daun Jeruk</h5>
+                    <p class="mb-0">Ukuran 150 gram</p>
+                    <strong>Rp 15.000</strong>
+                    <button class="btn-plus mt-2">+</button>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 varian lengkuas" data-varian="lengkuas">
+                <div class="produk-card">
+                    <img src="images/lengkuas.png" class="img-fluid mb-2">
+                    <h5 class="card-title text-warning fw-bold">Lengkuas</h5>
+                    <p class="mb-0">Ukuran 100 gram</p>
+                    <strong>Rp 12.000</strong>
+                    <button class="btn-plus mt-2">+</button>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6 varian lengkuas" data-varian="lengkuas">
+                <div class="produk-card">
+                    <img src="images/lengkuas.png" class="img-fluid mb-2">
+                    <h5 class="card-title text-warning fw-bold">Lengkuas</h5>
+                    <p class="mb-0">Ukuran 150 gram</p>
+                    <strong>Rp 15.000</strong>
+                    <button class="btn-plus mt-2" >+</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+document.querySelector("form[role='search']").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+
+    // Scroll otomatis ke produk
+    document.getElementById("produk").scrollIntoView({ behavior: "smooth" });
+
+    let items = document.querySelectorAll(".varian");
+
+    items.forEach(item => {
+        // Ambil semua class pada card
+        let classList = item.classList;
+
+        // Jika search kosong → tampilkan semua item
+        if (keyword === "" || keyword === "all") {
+            item.style.display = "block";
+        }
+        // Cocokkan keyword dengan class (original, daun-jeruk, lengkuas)
+        else if (classList.contains(keyword.replace(" ", "-"))) {
+            item.style.display = "block";
+        }
+        // Tidak cocok → sembunyikan
+        else {
+            item.style.display = "none";
+        }
+    });
+});
+</script>
+
+
+<script>
+document.getElementById("filterVarian").addEventListener("change", function () {
+    let pilihan = this.value;
+    let produk = document.querySelectorAll(".varian");
+
+    produk.forEach(card => {
+        if (pilihan === "" || pilihan === "all") {
+            // Tampilkan semua data
+            card.style.display = "block";
+        } else {
+            // Tampilkan sesuai pilihan
+            if (card.classList.contains(pilihan)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        }
+    });
+});
+</script>
 
 
 </body>
