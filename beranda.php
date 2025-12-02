@@ -192,7 +192,7 @@
           <!-- Icons -->
           <div class="d-flex align-items-center gap-3 ms-auto" >
             <!-- Cart -->
-            <a href="#" class="text-dark" style="font-size: 2rem;">
+            <a href="keranjang.php" class="text-dark" style="font-size: 2rem;">
               <i class="bi bi-cart"></i>
             </a>
 
@@ -247,7 +247,7 @@
                     <h5 class="card-title text-danger fw-bold">Original</h5>
                     <p class="mb-0">Ukuran 100 gram</p>
                     <strong>Rp 12.000</strong>
-                    <button class="btn-plus mt-2">+</button>
+                    <button class="btn-plus mt-2" onclick="addToCart(1)" >+</button>
                 </div>
             </div>
 
@@ -257,7 +257,7 @@
                     <h5 class="card-title text-danger fw-bold">Original</h5>
                     <p class="mb-0">Ukuran 150 gram</p>
                     <strong>Rp 15.000</strong>
-                    <button class="btn-plus mt-2">+</button>
+                    <button class="btn-plus mt-2" onclick="addToCart(2)">+</button>
                 </div>
             </div>
 
@@ -267,7 +267,7 @@
                     <h5 class="card-title text-success fw-bold">Daun Jeruk</h5>
                     <p class="mb-0">Ukuran 100 gram</p>
                     <strong>Rp 12.000</strong>
-                    <button class="btn-plus mt-2">+</button>
+                    <button class="btn-plus mt-2" onclick="addToCart(3)">+</button>
                 </div>
             </div>
 
@@ -277,7 +277,7 @@
                     <h5 class="card-title text-success fw-bold">Daun Jeruk</h5>
                     <p class="mb-0">Ukuran 150 gram</p>
                     <strong>Rp 15.000</strong>
-                    <button class="btn-plus mt-2">+</button>
+                    <button class="btn-plus mt-2" onclick="addToCart(4)">+</button>
                 </div>
             </div>
 
@@ -287,7 +287,7 @@
                     <h5 class="card-title text-warning fw-bold">Lengkuas</h5>
                     <p class="mb-0">Ukuran 100 gram</p>
                     <strong>Rp 12.000</strong>
-                    <button class="btn-plus mt-2">+</button>
+                    <button class="btn-plus mt-2" onclick="addToCart(5)">+</button>
                 </div>
             </div>
 
@@ -297,7 +297,7 @@
                     <h5 class="card-title text-warning fw-bold">Lengkuas</h5>
                     <p class="mb-0">Ukuran 150 gram</p>
                     <strong>Rp 15.000</strong>
-                    <button class="btn-plus mt-2" >+</button>
+                    <button class="btn-plus mt-2" onclick="addToCart(6)">+</button>
                 </div>
             </div>
 
@@ -358,6 +358,57 @@ document.getElementById("filterVarian").addEventListener("change", function () {
 });
 </script>
 
+<script>
+document.querySelector("form[role='search']").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+
+    // Scroll otomatis ke produk
+    document.getElementById("produk").scrollIntoView({ behavior: "smooth" });
+
+    let items = document.querySelectorAll(".varian");
+
+    items.forEach(item => {
+        // Ambil semua class pada card
+        let classList = item.classList;
+
+        // Jika search kosong → tampilkan semua item
+        if (keyword === "" || keyword === "all") {
+            item.style.display = "block";
+        }
+        // Cocokkan keyword dengan class (original, daun-jeruk, lengkuas)
+        else if (classList.contains(keyword.replace(" ", "-"))) {
+            item.style.display = "block";
+        }
+        // Tidak cocok → sembunyikan
+        else {
+            item.style.display = "none";
+        }
+    });
+});
+</script>
+
+
+<!-- Script Tambah ke Keranjang -->
+<script>
+function addToCart(product_id) {
+    fetch("keranjang.php?action=add&product_id=" + product_id)
+    .then(response => response.text())
+    .then(result => {
+        if (result === "success") {
+            alert("Produk ditambahkan ke keranjang!");
+        } else if (result === "not_logged_in") {
+            alert("Silakan login terlebih dahulu!");
+            window.location.href = "login.php";
+        } else {
+            alert("Gagal menambahkan ke keranjang!");
+            console.log(result);
+        }
+    });
+}
+
+</script>
 
 </body>
 </html>
