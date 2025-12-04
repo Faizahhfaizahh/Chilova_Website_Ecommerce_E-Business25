@@ -1,19 +1,39 @@
-<?php 
-    require "koneksi.php"; // koneksi database
+<?php
+require "session.php";
+require "koneksi.php";
+require "function.php";
 
-    // --- Ambil ID alamat dari URL ---
-    $id = isset($_GET['id']) ? $_GET['id'] : 0;
+if (!isset($_GET['id'])) {
+    header("Location: alamat_saya.php");
+    exit;
+}
 
-    // --- Contoh data (nanti diganti query database) ---
-    // Misal: SELECT * FROM alamat WHERE id = $id;
-    $alamat = [
-        "nama" => "Fulan Ramadhan",
-        "telepon" => "+62 812-3456-7890",
-        "alamat_lengkap" => "Jl. Melati No. 12, RT 04 RW 08, Sukamaju",
-        "kota" => "Bandung",
-        "kode_pos" => "40123",
-    ];
+$address_id = $_GET['id'];
+$user_id = $_SESSION['user_id'];
+
+// jika tombol hapus ditekan
+if (isset($_POST['delete'])) {
+    if (deleteAddress($address_id, $user_id)) {
+        header("Location: alamat_saya.php?msg=deleted");
+        exit;
+    } else {
+        $error = "Gagal menghapus alamat!";
+    }
+}
+
+// --- AMBIL DATA ALAMAT DARI DATABASE ---
+$stmt = $conn->prepare("SELECT * FROM alamat WHERE id = ? AND user_id = ?");
+$stmt->bind_param("ii", $address_id, $user_id);
+$stmt->execute();
+$alamat = $stmt->get_result()->fetch_assoc();
+
+// Jika alamat tidak ditemukan
+if (!$alamat) {
+    header("Location: alamat_saya.php?msg=notfound");
+    exit;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="id">
@@ -83,13 +103,13 @@
             </form>
 
             <!-- Tombol HAPUS -->
-            <form action="delete_address.php?id=<?= $id ?>" method="POST" class="mt-3">
-                <button type="submit" class="btn btn-outline-danger w-100 py-2"
+            <form method="POST">
+                <button type="submit" name="delete" class="btn btn-outline-danger w-100 py-2"
                         onclick="return confirm('Hapus alamat ini?')">
                     Hapus Alamat
                 </button>
             </form>
-
+            
             <!-- BACK -->
             <div class="text-center mt-3">
                 <a href="shipping_address.php" class="text-decoration-none">
