@@ -1,7 +1,7 @@
 <?php 
-$con = new mysqli("localhost","root","","chilova_database");
+$conn = new mysqli("localhost","root","","chilova_database");
 
-if ($con -> connect_errno) {
+if ($conn -> connect_errno) {
   echo "Failed to connect to MySQL: " . $mysqli -> connect_error;
   exit();
 }

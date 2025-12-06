@@ -1,5 +1,10 @@
-<?php 
-    require "koneksi.php"; // Menghubungkan database
+<?php
+session_start();
+
+if(!isset($_SESSION['user_id'])){
+    header("location: login.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -8,6 +13,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beranda</title>
+    <!-- Alert -->
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -169,6 +176,30 @@
 
 </head>
 <body>
+
+<?php
+    $success_message = '';
+    if (isset($_SESSION['success'])) {
+        $success_message = $_SESSION['success'];
+        unset($_SESSION['success']); 
+    }
+?>
+
+<?php if (!empty($success_message)): ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            title: "<?php echo addslashes($success_message); ?>",
+            icon: "success",
+            draggable: true,
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false,
+        });
+    });
+    </script>
+<?php endif; ?>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg fixed-top" style="background-color: #ffe9aa;">
       <div class="container-fluid">

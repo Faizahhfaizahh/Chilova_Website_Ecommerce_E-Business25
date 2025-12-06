@@ -1,5 +1,23 @@
 <?php 
-    require "koneksi.php"; // Menghubungkan database
+require "koneksi.php";
+
+if (isset($_POST['signup'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Enkripsi password (Wajib!)
+    $hashed = password_hash($password, PASSWORD_DEFAULT);
+
+    // Query insert
+    $query = "INSERT INTO users (username, password) VALUES ('$username', '$hashed')";
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        echo "<script>alert('Akun berhasil dibuat');</script>";
+    } else {
+        echo "<script>alert('Gagal membuat akun');</script>";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -32,24 +50,29 @@
             <div class="col-md-6">
                 <h4 class="mb-5" style="color:#e0540f">Chilova</h4>
                 <h5 class="mb-4">Create An Account</h5>
-                <!-- Form login -->
-                <div class="mb-3">
-                    <label for="formGroupExampleInput" class="form-label">Username</label>
-                    <input type="text"  class="form-control" id="formGroupExampleInput" placeholder="Input your username">
-                </div>
-                <div class="mb-3">
-                    <label for="formGroupExampleInput2" class="form-label">Password</label>
-                    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Input your password">
-                </div>
-                <!-- Link ke Create account -->
-                <div class="d-flex align-items-center">
-                    <p class="mb-0 me-2">Already have an account?</p>
-                    <a href="login.php">Login</a>
-                </div>
-                <!-- Button Login -->
-                <div class="d-grid gap-2 col-6 mx-auto mt-3">
-                    <button class="btn btn-sign-up mb-3" type="submit" onclick="window.location.href='beranda.php'">Sign Up</button>
-                </div>
+                <!-- Form registrasi -->
+                <form method="POST" action="">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+
+                    <!-- Link ke Create account -->
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0 me-2">Already have an account?</p>
+                        <a href="login.php">Login</a>
+                    </div>
+
+                    <div class="d-grid gap-2 col-6 mx-auto mt-3">
+                        <button class="btn btn-sign-up mb-3" type="submit" name="signup">Sign Up</button>
+                    </div>
+                </form>
+
             </div>
             <div class="col-md-6 p-0">
                 <!-- Gambar/visual -->

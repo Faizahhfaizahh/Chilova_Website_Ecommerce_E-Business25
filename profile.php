@@ -1,5 +1,24 @@
 <?php 
-    require "koneksi.php"; // Menghubungkan database
+    session_start();
+    require "koneksi.php"; 
+
+    if(!isset($_SESSION['user_id'])){
+        header("location: login.php");
+        exit;
+    }
+
+    $user_id = $_SESSION['user_id'];
+    $stmt = $conn->prepare("SELECT username FROM users WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+    $username = $user['username'];
+    } else {
+        $username = "User"; // jika tidak ditemukan
+    }
 ?>
 
 <!DOCTYPE html>
@@ -16,22 +35,20 @@
     <!-- Icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
-    .profile-img {
-        width: 120px !important;
-        height: 120px !important;
-        max-width: none !important;
-        object-fit: cover;
-    }
+        .profile-img {
+            width: 120px !important;
+            height: 120px !important;
+            max-width: none !important;
+            object-fit: cover;
+        }
 
-.profile-container {
-    max-width: 900px;
-}
+        .profile-container {
+            max-width: 900px;
+        }
 
-.menu-icon {
-    font-size: 2rem;
-}
-
-    
+        .menu-icon {
+            font-size: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -45,7 +62,7 @@
                     <!-- PROFILE HEADER -->
                     <div class="text-center mb-4">
                         <img src="images/profile.jpg" class="profile-img rounded-circle mb-3" alt="Profile Picture">
-                        <h3 class="fw-bold">Nama User</h3>
+                        <h3 class="fw-bold"><?php echo htmlspecialchars($username);?></h3>
                     </div>
 
                     <!-- MENU ORDER ICONS -->

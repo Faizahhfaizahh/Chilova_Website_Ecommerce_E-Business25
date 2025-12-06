@@ -1,10 +1,11 @@
 <?php
 session_start();
+
 require "koneksi.php";
 require "function.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
@@ -13,7 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $stmt->get_result()->fetch_assoc();
 
     if ($data && password_verify($password, $data['password'])) {
-        $_SESSION['user_id'] = $data['id'];
+        $_SESSION['user_id'] = $data['user_id'];
+        $_SESSION['success'] = "Login berhasil! Selamat datang, $username";
+
         header("Location: beranda.php");
         exit;
     } else {
@@ -21,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -77,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a href="registrasi.php">Sign Up</a>
                     </div>
 
-                    <div class="d-grid col-6 mx-auto mt-4">
+                    <div class="d-grid col-6 mx-auto mt-4 mb-3">
                         <button class="btn btn-sign-in" type="submit">Login</button>
                     </div>
 
