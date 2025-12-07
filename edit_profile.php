@@ -141,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- INPUT USERNAME -->
-                <!-- GANTI: name="username" bukan name="nama" -->
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Username</label>
                     <input type="text" name="username" class="form-control" 
@@ -163,9 +162,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- SIMPAN -->
-                <div class="d-flex justify-content-between mt-4">
-                    <a href="profile.php" class="btn btn-outline-secondary px-4">Batal</a>
-                    <button type="submit" class="btn btn-primary px-4">Simpan Perubahan</button>
+                <div class="d-flex flex-column flex-md-row justify-content-between gap-2 gap-md-0 mt-4">
+                    <a href="profile.php" class="btn btn-outline-secondary btn-sm btn-md-normal px-3 px-md-4">Batal</a>
+                    <button type="submit" class="btn btn-primary btn-sm btn-md-normal px-3 px-md-4">Simpan Perubahan</button>
                 </div>
             </form>
         </div>

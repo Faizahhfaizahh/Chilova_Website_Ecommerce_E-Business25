@@ -26,22 +26,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         empty($kota) || empty($provinsi) || empty($kode_pos)) {
         $error = "Semua field harus diisi!";
     } else {
-        try {
-            // Panggil function addAddress dengan parameter terpisah
-            if (addAddress($user_id, $nama_penerima, $no_telepon, $alamat_lengkap, $provinsi, $kota, $kode_pos)) {
-                $success = "Alamat berhasil ditambahkan!";
-                // Redirect setelah 1.5 detik
-                echo '<script>
-                    setTimeout(function() {
-                        window.location.href = "alamat_saya.php";
-                    }, 1500);
-                </script>';
-            } else {
-                $error = "Gagal menyimpan alamat.";
+        $phone_digits = preg_replace('/[^0-9]/', '', $no_telepon);
+        if (strlen($phone_digits) < 11 || strlen($phone_digits) > 12){
+            $error = "Nomor telepon harus 11-12 digit";
+        } else {
+            try {
+                // Panggil function addAddress dengan parameter terpisah
+                if (addAddress($user_id, $nama_penerima, $no_telepon, $alamat_lengkap, $provinsi, $kota, $kode_pos)) {
+                    $success = "Alamat berhasil ditambahkan!";
+                    // Redirect setelah 1.5 detik
+                    echo '<script>
+                        setTimeout(function() {
+                            window.location.href = "alamat_saya.php";
+                        }, 1500);
+                    </script>';
+                } else {
+                    $error = "Gagal menyimpan alamat.";
+                }
+            } catch (Exception $e) {
+                $error = $e->getMessage();
             }
-        } catch (Exception $e) {
-            $error = $e->getMessage();
         }
+
     }
 }
 ?>
@@ -52,6 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tambah Alamat Baru</title>
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -106,8 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="input-group-text">+62</span>
                             <input type="tel" class="form-control" id="no_telepon" name="no_telepon" 
                                 placeholder="81234567890" 
-                                pattern="[0-9]{9,13}" 
-                                title="Masukkan 9-13 digit nomor telepon (tanpa +62)" 
+                                pattern="[0-9]{11,12}" 
+                                title="Masukkan 11-12 digit nomor telepon (tanpa +62)" 
                                 required>
                         </div>
                         <div class="form-text">Contoh: 81234567890</div>
@@ -175,6 +184,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </div>
+
+<script>
+// Format nomor telepon otomatis (hapus semua non-digit)
+document.getElementById('no_telepon').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    // Batasi maksimal 12 digit
+    if (value.length > 12) {
+        value = value.substring(0, 12);
+    }
+    
+    e.target.value = value;
+});
+
+// Validasi sebelum submit
+document.getElementById('addForm').addEventListener('submit', function(e) {
+    const phone = document.getElementById('no_telepon').value.replace(/\D/g, '');
+    const kodePos = document.getElementById('kode_pos').value.trim();
+    
+    // Validasi panjang nomor telepon (11-12 digit)
+    if (phone.length < 11 || phone.length > 12) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Nomor Telepon Tidak Valid',
+            text: 'Nomor telepon harus 11-12 digit\nContoh: 81234567890',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'OK'
+        });
+        document.getElementById('no_telepon').focus();
+        return false;
+    }
+    
+    // Validasi kode pos (5 digit)
+    if (!/^\d{5}$/.test(kodePos)) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Kode Pos Tidak Valid',
+            text: 'Kode pos harus 5 digit angka (contoh: 12345)',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'OK'
+        });
+        document.getElementById('kode_pos').focus();
+        return false;
+    }
+    
+    return true;
+});
+</script>
+
+<?php if($error): ?>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal Menyimpan',
+            text: '<?= addslashes($error) ?>',
+            confirmButtonColor: '#dc3545',
+            confirmButtonText: 'OK'
+        });
+    </script>
+<?php endif; ?>
+
+<?php if($success): ?>
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '<?= addslashes($success) ?>',
+            showConfirmButton: true,
+            confirmButtonColor: '#198754',
+            timer: 1500,
+            timerProgressBar: true,
+            willClose: () => {
+                window.location.href = 'alamat_saya.php';
+            }
+        });
+    </script>
+<?php endif; ?>
 
 </body>
 </html>

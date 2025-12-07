@@ -58,6 +58,13 @@
 
                 <!-- CARD BESAR -->
                 <div class="shadow p-4 rounded-4 bg-white">
+                    <!-- TOMBOL KEMBALI -->
+                    <div class="mb-4">
+                        <a href="beranda.php" class="text-decoration-none text-dark">
+                                <i class="bi bi-arrow-left me-2"></i>
+                                <span class="fw-medium">Kembali ke Beranda</span>
+                        </a>
+                    </div>
 
                     <!-- PROFILE HEADER -->
                     <div class="text-center mb-4">

@@ -32,6 +32,12 @@ $alamat_result = getUserAddresses($user_id);
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-6 col-md-8 col-12">
+            <div class="mb-4">
+                <a href="profile.php" class="text-decoration-none text-dark">
+                        <i class="bi bi-arrow-left me-2"></i>
+                        <span class="fw-medium">Kembali ke Profile</span>
+                </a>
+            </div>
 
             <h3 class="fw-bold mb-4 text-center">Alamat Pengiriman</h3>
 
@@ -68,7 +74,7 @@ $alamat_result = getUserAddresses($user_id);
                             <?php if($alamat['is_default_alamat'] == 0): ?>
                                 <a href="set_default.php?alamat_id=<?= $alamat['alamat_id'] ?>" 
                                    class="text-success" title="Jadikan Alamat Utama">
-                                    <i class="bi bi-star fs-4"></i>
+                                    <!-- <i class="bi bi-star fs-4"></i> -->
                                 </a>
                             <?php endif; ?>
                         </div>

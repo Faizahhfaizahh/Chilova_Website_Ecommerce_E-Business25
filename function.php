@@ -107,10 +107,6 @@ function addAddress($user_id, $nama_penerima, $no_telepon, $alamat_lengkap, $pro
     // Jika belum punya alamat → jadikan default otomatis
     $is_default_alamat = (getUserAddresses($user_id)->num_rows == 0) ? 1 : 0;
 
-    if ($is_default_alamat) {
-        unsetDefaultAddress($user_id);
-    }
-
     $stmt = $conn->prepare("INSERT INTO alamat
         (user_id, nama_penerima, no_telepon, alamat_lengkap, provinsi, kota, kode_pos, is_default_alamat)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -123,6 +119,9 @@ function addAddress($user_id, $nama_penerima, $no_telepon, $alamat_lengkap, $pro
 // Update / Edit alamat
 function updateAddress($alamat_id, $user_id, $nama_penerima, $no_telepon, $alamat_lengkap, $provinsi, $kota, $kode_pos) {
     global $conn;
+
+    $no_telepon = formatPhoneForDatabase($no_telepon);
+
     $stmt = $conn->prepare("UPDATE alamat SET 
         nama_penerima = ?, 
         no_telepon = ?, 
