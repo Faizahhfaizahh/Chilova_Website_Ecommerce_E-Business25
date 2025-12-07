@@ -84,7 +84,78 @@
   border-radius: 10px !important;
 }
 
-/* Profile page */
+/* Checkout page */
+
+        .card-checkout {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .card-header-checkout {
+            background-color: #e0540f;
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 15px 20px;
+            font-weight: bold;
+        }
+        .product-img-small {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .address-box {
+            background: #fff8e6;
+            border-left: 4px solid #e0540f;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .payment-method {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-method:hover, .payment-method.selected {
+            border-color: #e0540f;
+            background-color: #fff8e6;
+        }
+        .payment-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        .total-box {
+            background: linear-gradient(135deg, #e0540f, #ff7b3a);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .btn-checkout {
+            background: #e0540f;
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 10px;
+            width: 100%;
+            border: none;
+            transition: all 0.3s;
+        }
+        .btn-checkout:hover {
+            background: #c9480c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(224, 84, 15, 0.3);
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .empty-cart i {
+            font-size: 4rem;
+            color: #ddd;
+        }
 
 
 

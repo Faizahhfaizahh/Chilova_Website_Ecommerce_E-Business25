@@ -77,27 +77,51 @@
                         <h3 class="fw-bold"><?php echo htmlspecialchars($username);?></h3>
                     </div>
 
-                    <!-- MENU ORDER ICONS -->
-                    <div class="menu-card mb-4">
-                        <h5 class="fw-bold mb-3">Pesanan Saya</h5>
+                <!-- MENU ORDER ICONS -->
+                <div class="menu-card mb-4">
+                    <h5 class="fw-bold mb-3">Pesanan Saya</h5>
+                    <div class="row text-center">
+                        <!-- DIPROSES (LINK KE profile_diproses.php) -->
+                        <div class="col-4 col-md-4 mb-4 menu-item">
+                            <a href="diproses.php" class="text-decoration-none text-dark d-flex flex-column align-items-center">
+                                <div class="position-relative">
+                                    <i class="bi bi-box-seam menu-icon"></i>
+                                    <?php
+                                    // Hitung jumlah order diproses
+                                    $count_query = "SELECT COUNT(*) as count FROM orders 
+                                                    WHERE user_id = $user_id AND status = 'Diproses'";
+                                    $count_result = mysqli_query($conn, $count_query);
+                                    $count_data = mysqli_fetch_assoc($count_result);
+                                    $diproses_count = $count_data['count'];
+                                    ?>
+                                    <?php if($diproses_count > 0): ?>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                                            style="font-size: 0.6rem; padding: 4px 6px;">
+                                            <?php echo $diproses_count; ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <p class="menu-label mb-0 mt-2">Diproses</p>
+                            </a>
+                        </div>
 
-                        <div class="row text-center">
-                            <div class="col-4 col-md-4 mb-4 menu-item">
-                                <i class="bi bi-box-seam menu-icon"></i>
-                                <p class="menu-label mb-0">Diproses</p>
-                            </div>
-
-                            <div class="col-4 col-md-4 mb-4 menu-item">
+                        <!-- RIWAYAT (nanti buat profile_riwayat.php) -->
+                        <div class="col-4 col-md-4 mb-4 menu-item">
+                            <a href="riwayat_pesanan.php" class="text-decoration-none text-dark d-flex flex-column align-items-center">
                                 <i class="bi bi-receipt menu-icon"></i>
-                                <p class="menu-label mb-0">Riwayat</p>
-                            </div>
+                                <p class="menu-label mb-0 mt-2">Riwayat</p>
+                            </a>
+                        </div>
 
-                            <div class="col-4 col-md-4 mb-4 menu-item">
+                        <!-- FAVORIT -->
+                        <div class="col-4 col-md-4 mb-4 menu-item">
+                            <a href="#" class="text-decoration-none text-dark d-flex flex-column align-items-center">
                                 <i class="bi bi-heart menu-icon"></i>
-                                <p class="menu-label mb-0">Favorit</p>
-                            </div>
+                                <p class="menu-label mb-0 mt-2">Favorit</p>
+                            </a>
                         </div>
                     </div>
+                </div>
 
                     <ul class="list-group rounded-4 overflow-hidden mb-4">
                         <a href="edit_profile.php" class="text-decoration-none text-dark">
