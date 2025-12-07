@@ -19,15 +19,15 @@ if (isset($_GET['action']) && $_GET['action'] === "add") {
     $product_id = intval($_GET['product_id']);
 
     // Cek apakah produk sudah ada
-    $cek = mysqli_query($con, "SELECT * FROM cart 
+    $cek = mysqli_query($conn, "SELECT * FROM cart 
                                 WHERE user_id=$user_id AND product_id=$product_id");
 
     if (mysqli_num_rows($cek) > 0) {
-        mysqli_query($con, "UPDATE cart 
+        mysqli_query($conn, "UPDATE cart 
                              SET qty = qty + 1 
                              WHERE user_id=$user_id AND product_id=$product_id");
     } else {
-        mysqli_query($con, "INSERT INTO cart (user_id, product_id, qty) 
+        mysqli_query($conn, "INSERT INTO cart (user_id, product_id, qty) 
                              VALUES ($user_id, $product_id, 1)");
     }
 
@@ -43,7 +43,7 @@ if (isset($_GET['action']) && $_GET['action'] === "delete") {
     
     $cart_id = intval($_GET['id']);
 
-    mysqli_query($con, "DELETE FROM cart 
+    mysqli_query($conn, "DELETE FROM cart 
                          WHERE id = $cart_id AND user_id = $user_id");
 
     echo "success";
@@ -60,11 +60,11 @@ if (isset($_GET['action']) && $_GET['action'] === "update") {
     $type = $_GET['type']; // plus / minus
 
     if ($type == "plus") {
-        mysqli_query($con, "UPDATE cart 
+        mysqli_query($conn, "UPDATE cart 
                              SET qty = qty + 1 
                              WHERE id = $cart_id");
     } else {
-        mysqli_query($con, "UPDATE cart 
+        mysqli_query($conn, "UPDATE cart 
                              SET qty = GREATEST(qty - 1, 1) 
                              WHERE id = $cart_id");
     }
@@ -81,7 +81,7 @@ $query = "SELECT cart.id AS cart_id, cart.qty, products.*
           FROM cart 
           JOIN products ON cart.product_id = products.id
           WHERE cart.user_id = $user_id";
-$result = mysqli_query($con, $query);
+$result = mysqli_query($conn, $query);
 
 ?>
 
