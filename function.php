@@ -17,8 +17,10 @@ function registerUser($username, $password) {
     // Enkripsi password
     $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-    $stmt = $conn->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, 'user')");
-    $stmt->bind_param("ss", $username, $hashed);
+    $profile_picture = 'default.jpg';
+
+    $stmt = $conn->prepare("INSERT INTO users (username, password, role, profile_picture) VALUES (?, ?, 'user', ?)");
+    $stmt->bind_param("sss", $username, $hashed, $profile_picture);
 
     return $stmt->execute() ? "SUCCESS" : "FAILED";
 }
@@ -225,5 +227,139 @@ function displayPhoneNumber($phone) {
     return trim($formatted);
 }
 
+// UNTUK FOTO PROFILE
+// ... (fungsi yang sudah ada)
+
+// Upload dan update foto profil
+function uploadProfilePicture($user_id, $file) {
+    global $conn;
+    
+    $allowed_types = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+    $max_size = 2 * 1024 * 1024; // 2MB
+    
+    // Validasi file
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        return "Upload gagal. Error code: " . $file['error'];
+    }
+    
+    if (!in_array($file['type'], $allowed_types)) {
+        return "Hanya file JPG, PNG, GIF yang diizinkan.";
+    }
+    
+    if ($file['size'] > $max_size) {
+        return "Ukuran file maksimal 2MB.";
+    }
+    
+    // Generate nama file unik
+    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = 'profile_' . $user_id . '_' . time() . '.' . $extension;
+    $upload_path = 'uploads/profile/' . $filename;
+    
+    // Buat folder jika belum ada
+    if (!file_exists('uploads/profile')) {
+        mkdir('uploads/profile', 0777, true);
+    }
+    
+    // Pindahkan file ke folder uploads
+    if (move_uploaded_file($file['tmp_name'], $upload_path)) {
+        // Ambil foto lama untuk dihapus nanti
+        $stmt = $conn->prepare("SELECT profile_picture FROM users WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $old_picture = $user['profile_picture'];
+        
+        // Update database dengan foto baru
+        $update_stmt = $conn->prepare("UPDATE users SET profile_picture = ? WHERE user_id = ?");
+        $update_stmt->bind_param("si", $filename, $user_id);
+        
+        if ($update_stmt->execute()) {
+            // Hapus foto lama jika bukan default.png
+            if ($old_picture !== 'default.jpg' && file_exists('uploads/profile/' . $old_picture)) {
+                unlink('uploads/profile/' . $old_picture);
+            }
+            
+            // Update session
+            $_SESSION['profile_picture'] = $filename;
+            
+            return ['success' => true, 'filename' => $filename];
+        } else {
+            return "Gagal menyimpan ke database.";
+        }
+    } else {
+        return "Gagal mengupload file.";
+    }
+}
+
+// Ambil path foto profil - TANPA BACKSLASH
+function getProfilePicturePath($user_id) {
+    global $conn;
+    
+    $stmt = $conn->prepare("SELECT profile_picture FROM users WHERE user_id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        $filename = $user['profile_picture'];
+        
+        // Jika NULL atau kosong di database
+        if ($filename === NULL || $filename === '') {
+            $update_stmt = $conn->prepare("UPDATE users SET profile_picture = 'default.jpg' WHERE user_id = ?");
+            $update_stmt->bind_param("i", $user_id);
+            $update_stmt->execute();
+            
+            $filename = 'default.jpg';
+        }
+        
+        // TIDAK ADA BACKSLASH DI SINI
+        if ($filename === 'default.jpg') {
+            return 'images/default.jpg';
+        }
+        
+        // Jika user punya foto custom
+        $filepath = 'uploads/profile/' . $filename;
+        
+        if (file_exists($filepath)) {
+            return $filepath;
+        } else {
+            return 'images/default.jpg';
+        }
+    }
+    
+    return 'images/default.jpg';
+}
+
+// Update profile dengan foto
+function updateUserProfile($user_id, $username, $password = null, $profile_picture = null) {
+    global $conn;
+    
+    try {
+        $conn->begin_transaction();
+        
+        // Update username
+        $stmt = $conn->prepare("UPDATE users SET username = ? WHERE user_id = ?");
+        $stmt->bind_param("si", $username, $user_id);
+        $stmt->execute();
+        
+        // Update password jika ada
+        if ($password) {
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $stmt2 = $conn->prepare("UPDATE users SET password = ? WHERE user_id = ?");
+            $stmt2->bind_param("si", $hashed, $user_id);
+            $stmt2->execute();
+        }
+        
+        $conn->commit();
+        $_SESSION['username'] = $username;
+        return true;
+    } catch (Exception $e) {
+        $conn->rollback();
+        error_log("Error updateProfile: " . $e->getMessage());
+        return false;
+    }
+}
 
 ?>

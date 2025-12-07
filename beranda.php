@@ -228,12 +228,22 @@ if(!isset($_SESSION['user_id'])){
             </a>
 
             <!-- User -->
-            <a href="profile.php" class="text-dark ms-3" style="font-size: 2rem;">
-              <i class="bi bi-person-circle"></i>
-            </a>
-          </div>
+                <?php
+                // Ambil foto profil user
+                require "function.php";
+                $user_id = $_SESSION['user_id'];
+                $profile_picture = getProfilePicturePath($user_id);
+                ?>
+                <a href="profile.php" class="text-dark ms-3">
+                <img src="<?php echo htmlspecialchars($profile_picture); ?>" 
+                    alt="Profile" 
+                    class="rounded-circle" 
+                    style="width: 40px; height: 40px; object-fit: cover;"
+                    onerror="this.src='images/profile.jpg'">
+                </a>
+            </div>
+            </div>
         </div>
-      </div>
     </nav>
 
 <!-- Hero Banner -->

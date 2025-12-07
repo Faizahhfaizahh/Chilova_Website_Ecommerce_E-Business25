@@ -19,7 +19,7 @@ $error = '';
 $success = '';
 
 // AMBIL DATA USER SAAT INI
-$stmt = $conn->prepare("SELECT username FROM users WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT username, profile_picture FROM users WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -27,6 +27,9 @@ $result = $stmt->get_result();
 if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
     $current_username = $user['username'];
+    $current_profile_picture = getProfilePicturePath($user_id); // Gunakan fungsi
+} else {
+    $current_profile_picture = 'images/default.jpg'; // Default
 }
 
 // PROSES FORM JIKA ADA SUBMIT
@@ -56,6 +59,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Username sudah digunakan";
         }
     }
+
+    // PROSES UPLOAD FOTO JIKA ADA
+    $upload_result = null;
+    if (empty($error) && isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+        $upload_result = uploadProfilePicture($user_id, $_FILES['profile_picture']);
+        
+        if (is_array($upload_result) && $upload_result['success']) {
+            $success .= " Foto profil berhasil diupload. ";
+            $current_profile_picture = 'uploads/profile/' . $upload_result['filename'];
+        } elseif (is_string($upload_result)) {
+            $error = $upload_result;
+        }
+    }
     
     // UPDATE DATABASE JIKA TIDAK ADA ERROR
     if (empty($error)) {
@@ -75,6 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['username'] = $username;
             $success = "Profile berhasil diperbarui!";
             $current_username = $username; // Update tampilan
+            
+            // Refresh foto profil
+            $current_profile_picture = getProfilePicturePath($user_id);
         } else {
             $error = "Gagal memperbarui profile";
         }
@@ -97,6 +116,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="style.css">
     <!-- Icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .profile-preview-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        
+        .profile-preview {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #e0540f;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-preview:hover {
+            opacity: 0.9;
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(224, 84, 15, 0.9);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .camera-overlay:hover {
+            background: #e0540f;
+            transform: scale(1.1);
+        }
+        
+        .camera-overlay i {
+            font-size: 1.2rem;
+        }
+        
+        .upload-btn input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+        
+        /* Responsive */
+        @media (max-width: 576px) {
+            .profile-preview {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .camera-overlay {
+                width: 35px;
+                height: 35px;
+                bottom: 8px;
+                right: 8px;
+            }
+            
+            .camera-overlay i {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .profile-preview {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .camera-overlay {
+                width: 30px;
+                height: 30px;
+                bottom: 5px;
+                right: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
 <div class="container py-5">
@@ -104,10 +213,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-lg-6 col-md-8 col-12">
             
             <?php if ($error): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <?php echo htmlspecialchars($error); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: '<?php echo addslashes($error); ?>',
+                        confirmButtonColor: '#dc3545'
+                    });
+                });
+                </script>
             <?php endif; ?>
 
             <?php if ($success): ?>
@@ -127,17 +242,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <!-- FORM EDIT PROFILE -->
-            <!-- GANTI: action kosong dan method="POST" -->
-            <form method="POST" class="shadow p-4 rounded-4">
+            <form method="POST" enctype="multipart/form-data" class="shadow p-4 rounded-4">
                 <h4 class="fw-bold mb-3 text-center">Edit Profile</h4>
 
-                <!-- FOTO PROFIL -->
+                <!-- FOTO PROFIL DENGAN ICON KAMERA -->
                 <div class="text-center mb-4">
-                    <div class="position-relative d-inline-block">
-                        <img src="images/profile.jpg"
-                             class="rounded-circle"
-                             style="width:120px; height:120px; object-fit:cover;">
+                    <div class="profile-preview-container">
+                        <img id="profilePreview" src="<?php echo htmlspecialchars($current_profile_picture); ?>" 
+                             class="profile-preview mb-3" 
+                             alt="Profile Picture"
+                             onerror="this.src='images/default.jpg'">
+                        
+                        <!-- Icon Kamera Overlay -->
+                        <label class="camera-overlay upload-btn">
+                            <i class="bi bi-camera"></i>
+                            <input type="file" name="profile_picture" id="profile_picture" 
+                                   accept="image/*" 
+                                   onchange="previewImage(this)">
+                        </label>
                     </div>
+                    <div class="form-text small mt-2">Klik icon kamera untuk ganti foto. Max 2MB (JPG, PNG)</div>
                 </div>
 
                 <!-- INPUT USERNAME -->
@@ -172,6 +296,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profilePreview').src = e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+        
+        // Tampilkan nama file (opsional)
+        const fileName = input.files[0].name;
+        console.log("File selected: " + fileName);
+    }
+}
+
 function togglePassword() {
     const input = document.getElementById("password");
     const icon = document.getElementById("toggleIcon");

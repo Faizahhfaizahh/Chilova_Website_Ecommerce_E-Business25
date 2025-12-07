@@ -1,6 +1,7 @@
 <?php 
     session_start();
     require "koneksi.php"; 
+    require "function.php";
 
     if(!isset($_SESSION['user_id'])){
         header("location: login.php");
@@ -8,7 +9,7 @@
     }
 
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT username FROM users WHERE user_id = ?");
+    $stmt = $conn->prepare("SELECT username, profile_picture FROM users WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -16,8 +17,10 @@
     if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
     $username = $user['username'];
+    $profile_picture = getProfilePicturePath($user_id);
     } else {
         $username = "User"; // jika tidak ditemukan
+        $profile_picture = 'images/default.jpg';
     }
 ?>
 
@@ -68,7 +71,9 @@
 
                     <!-- PROFILE HEADER -->
                     <div class="text-center mb-4">
-                        <img src="images/profile.jpg" class="profile-img rounded-circle mb-3" alt="Profile Picture">
+                        <img src="<?php echo htmlspecialchars($profile_picture); ?>" 
+                            class="profile-img rounded-circle mb-3" 
+                            alt="Profile Picture">
                         <h3 class="fw-bold"><?php echo htmlspecialchars($username);?></h3>
                     </div>
 
