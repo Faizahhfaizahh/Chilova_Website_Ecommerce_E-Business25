@@ -73,7 +73,7 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
         
         .sidebar {
             min-height: 100vh;
-            background: linear-gradient(135deg, #FFE9AA 0%, #FFD54F 100%); /* Warna kuning */
+            background: linear-gradient(135deg, #FFE9AA 0%, #FFD54F 100%);
             color: #333;
             position: fixed;
             left: 0;
@@ -107,7 +107,7 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
         }
         
         .nav-link:hover, .nav-link.active {
-            background-color: rgba(224, 84, 15, 0.1); /* Warna oranye transparan */
+            background-color: rgba(224, 84, 15, 0.1);
             color: #e0540f;
         }
         
@@ -245,7 +245,6 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
             color: #e0540f;
         }
         
-        /* Tombol dengan warna oranye */
         .btn-orange {
             background-color: #e0540f;
             border-color: #e0540f;
@@ -320,7 +319,6 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
                     <small class="text-muted">Administrator</small>
                 </div>
                 <?php
-                // Ambil foto profil user
                 require "../function.php";
                 $user_id = $_SESSION['user_id'];
                 $profile_picture = getProfilePicturePath($user_id);
@@ -396,14 +394,12 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
                         <th>Total</th>
                         <th>Metode</th>
                         <th>Status</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (mysqli_num_rows($pesanan_terbaru) > 0): ?>
                         <?php while ($pesanan = mysqli_fetch_assoc($pesanan_terbaru)): ?>
                             <?php
-                            // Format status badge
                             $status_class = '';
                             $status_text = '';
                             switch ($pesanan['status']) {
@@ -447,16 +443,11 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
                                 <td>
                                     <span class="badge-status <?= $status_class ?>"><?= $status_text ?></span>
                                 </td>
-                                <td>
-                                    <a href="pesanan_detail.php?id=<?= $pesanan['order_id'] ?>" class="btn btn-sm btn-outline-orange">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="7" class="text-center py-4 text-muted">
+                            <td colspan="6" class="text-center py-4 text-muted">
                                 <i class="bi bi-cart-x" style="font-size: 2rem;"></i>
                                 <p class="mt-2">Belum ada pesanan</p>
                             </td>
@@ -467,46 +458,23 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
         </div>
     </div>
     
-    <!-- Quick Actions -->
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="table-container">
-                <h5 class="mb-3"><i class="bi bi-lightning me-2"></i>Aksi Cepat</h5>
-                <div class="d-grid gap-2">
-                    <?php if ($menunggu_verifikasi > 0): ?>
-                    <a href="verifikasi.php" class="btn btn-warning btn-lg">
-                        <i class="bi bi-cash-coin me-2"></i> Verifikasi <?= $menunggu_verifikasi ?> Pembayaran DANA
-                    </a>
-                    <?php endif; ?>
-                    <a href="produk_tambah.php" class="btn btn-orange">
-                        <i class="bi bi-plus-circle me-2"></i> Tambah Produk Baru
-                    </a>
-                    <a href="produk.php" class="btn btn-outline-orange">
-                        <i class="bi bi-box-seam me-2"></i> Kelola Produk
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-6">
-            <div class="table-container">
-                <h5 class="mb-3"><i class="bi bi-info-circle me-2"></i>Informasi Toko</h5>
+    <!-- Informasi Toko Sederhana -->
+    <div class="table-container mt-4">
+        <h5 class="mb-4"><i class="bi bi-info-circle me-2"></i>Informasi Toko</h5>
+        <div class="row">
+            <div class="col-md-12">
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Nama Toko:</span>
-                        <strong>Chilova</strong>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-shop me-2"></i>Nama Toko:</span>
+                        <strong class="text-orange">Chilova</strong>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Rekening DANA:</span>
-                        <strong>0877-4577-0076</strong>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Admin:</span>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-person me-2"></i>Admin:</span>
                         <strong><?= $_SESSION['username'] ?? 'Admin' ?></strong>
                     </li>
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Login Terakhir:</span>
-                        <strong><?= date('d/m/Y H:i') ?></strong>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-wallet me-2"></i>Rekening DANA:</span>
+                        <strong class="text-success">0877-4577-0076</strong>
                     </li>
                 </ul>
             </div>
@@ -520,12 +488,10 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
 <!-- Mobile Sidebar Toggle -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Untuk mobile, kita bisa menambahkan toggle button
     if (window.innerWidth < 768) {
         const sidebar = document.querySelector('.sidebar');
         const header = document.querySelector('.header');
         
-        // Create toggle button
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'btn btn-orange mb-3';
         toggleBtn.innerHTML = '<i class="bi bi-list"></i> Menu';

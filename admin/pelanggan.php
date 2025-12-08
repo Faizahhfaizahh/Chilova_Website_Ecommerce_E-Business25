@@ -181,7 +181,7 @@ $result_pelanggan = mysqli_query($conn, $query_pelanggan);
             <span class="badge bg-danger float-end"><?= $menunggu_verifikasi ?></span>
             <?php endif; ?>
         </a>
-        <a href="verifikasi.php" class="nav-link">
+        <a href="verifikasi_dana.php" class="nav-link">
             <i class="bi bi-cash-coin"></i> Verifikasi DANA
             <?php if ($menunggu_verifikasi > 0): ?>
             <span class="badge bg-danger float-end"><?= $menunggu_verifikasi ?></span>

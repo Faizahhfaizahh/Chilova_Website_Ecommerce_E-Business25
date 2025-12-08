@@ -311,11 +311,9 @@ if (isset($_POST['update_status'])) {
         </a>
         <a href="pesanan.php" class="nav-link active">
             <i class="bi bi-cart-check"></i> Pesanan
-            <span class="badge bg-danger float-end"><?= $count_menunggu ?></span>
         </a>
-        <a href="verifikasi.php" class="nav-link">
+        <a href="verifikasi_dana.php" class="nav-link">
             <i class="bi bi-cash-coin"></i> Verifikasi DANA
-            <span class="badge bg-danger float-end"><?= $count_menunggu ?></span>
         </a>
         <a href="produk.php" class="nav-link">
             <i class="bi bi-box-seam"></i> Produk
@@ -518,7 +516,9 @@ if (isset($_POST['update_status'])) {
                                             <i class="bi bi-eye"></i>
                                         </button>
                                         <button type="button" class="btn btn-outline-orange" data-bs-toggle="modal" data-bs-target="#updateModal<?= $pesanan['order_id'] ?>">
-                                            <i class="bi bi-pencil"></i>
+                                            <a href="edit_pesanan.php?id=<?= $pesanan['order_id'] ?>" class="btn-outline-orange">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
                                         </button>
                                     </div>
                                     
