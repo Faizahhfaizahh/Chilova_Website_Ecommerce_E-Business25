@@ -24,48 +24,40 @@ $query_verifikasi = "SELECT COUNT(*) as total FROM orders WHERE metode_pembayara
 $result_verifikasi = mysqli_query($conn, $query_verifikasi);
 $menunggu_verifikasi = mysqli_fetch_assoc($result_verifikasi)['total'] ?? 0;
 
-// Ambil data produk berdasarkan ID
-$product_id = isset($_GET['id']) ? mysqli_real_escape_string($conn, $_GET['id']) : 0;
-$query_produk = "SELECT * FROM products WHERE id = '$product_id'";
+// Ambil semua produk dari database untuk ditampilkan
+$query_produk = "SELECT * FROM products ORDER BY nama, varian, ukuran";
 $result_produk = mysqli_query($conn, $query_produk);
 
-
-$produk = mysqli_fetch_assoc($result_produk);
-
-// Proses form edit produk
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nama = mysqli_real_escape_string($conn, $_POST['nama']);
-    $varian = mysqli_real_escape_string($conn, $_POST['varian']);
-    $ukuran = mysqli_real_escape_string($conn, $_POST['ukuran']);
-    $harga = mysqli_real_escape_string($conn, $_POST['harga']);
-    $stok = mysqli_real_escape_string($conn, $_POST['stok'] ?? 0);
+// Proses form tambah stok
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
+    $product_id = mysqli_real_escape_string($conn, $_POST['product_id']);
+    $tambah_stok = mysqli_real_escape_string($conn, $_POST['tambah_stok']);
     
     // Validasi input
     $errors = [];
     
-    if (empty($nama)) $errors[] = "Nama produk harus diisi!";
-    if (empty($varian)) $errors[] = "Varian harus dipilih!";
-    if (empty($ukuran)) $errors[] = "Ukuran harus dipilih!";
-    if (empty($harga)) $errors[] = "Harga harus diisi!";
-    if (!is_numeric($harga) || $harga <= 0) $errors[] = "Harga harus berupa angka positif!";
-    if (!is_numeric($stok) || $stok < 0) $errors[] = "Stok harus berupa angka tidak negatif!";
+    if (empty($product_id)) $errors[] = "Produk harus dipilih!";
+    if (!is_numeric($tambah_stok) || $tambah_stok <= 0) $errors[] = "Jumlah stok harus berupa angka positif!";
     
     if (empty($errors)) {
-        // Update produk
-        $query_update = "UPDATE products SET 
-                         nama = '$nama',
-                         varian = '$varian',
-                         ukuran = '$ukuran',
-                         harga = '$harga',
-                         stok = '$stok'
-                         WHERE id = '$product_id'";
+        // Ambil stok saat ini
+        $query_current = "SELECT stok FROM products WHERE id = '$product_id'";
+        $result_current = mysqli_query($conn, $query_current);
+        $current = mysqli_fetch_assoc($result_current);
+        $current_stok = $current['stok'];
+        
+        // Hitung stok baru
+        $new_stok = $current_stok + $tambah_stok;
+        
+        // Update stok produk
+        $query_update = "UPDATE products SET stok = '$new_stok' WHERE id = '$product_id'";
         
         if (mysqli_query($conn, $query_update)) {
-            $_SESSION['success'] = "Produk berhasil diperbarui!";
-            header("Location: produk.php");
+            $_SESSION['success'] = "Stok berhasil ditambahkan! Stok sekarang: " . $new_stok . " pcs";
+            header("Location: tambah_produk.php");
             exit;
         } else {
-            $_SESSION['error'] = "Gagal memperbarui produk: " . mysqli_error($conn);
+            $_SESSION['error'] = "Gagal menambahkan stok: " . mysqli_error($conn);
         }
     } else {
         $_SESSION['error'] = implode("<br>", $errors);
@@ -78,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Produk - Chilova Admin</title>
+    <title>Tambah Stok Produk - Chilova Admin</title>
     
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -158,11 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
         /* Styling untuk badge varian */
         .badge-original {
             background-color: #e3f2fd;
@@ -177,6 +164,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .badge-keju {
             background-color: #fff3e0;
             color: #ef6c00;
+        }
+        
+        .product-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .stok-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .current-stock {
+            font-weight: bold;
+            color: #198754;
         }
     </style>
 </head>
@@ -204,8 +208,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span class="badge bg-danger float-end"><?= $menunggu_verifikasi ?></span>
             <?php endif; ?>
         </a>
-        <a href="produk.php" class="nav-link active">
+        <a href="produk.php" class="nav-link">
             <i class="bi bi-box-seam"></i> Produk
+        </a>
+        <a href="tambah_produk.php" class="nav-link active">
+            <i class="bi bi-plus-circle"></i> Tambah Stok
         </a>
         <a href="pelanggan.php" class="nav-link">
             <i class="bi bi-people"></i> Pelanggan
@@ -223,7 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="main-content">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-pencil me-2"></i>Edit Produk</h2>
+        <h2><i class="bi bi-plus-circle me-2"></i>Tambah Stok Produk</h2>
         <div>
             <span class="me-3"><?= $_SESSION['username'] ?? 'Admin' ?></span>
             <?php
@@ -260,122 +267,128 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
 
-    <!-- Form Edit Produk -->
-    <div class="card">
+    <!-- Form Tambah Stok -->
+    <div class="card mb-4">
         <div class="card-body">
-            <div class="form-container">
-                <form method="POST" action="">
-                    <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Produk *</label>
-                        <input type="text" class="form-control" id="nama" name="nama" 
-                               value="<?= htmlspecialchars($produk['nama']) ?>" required>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="varian" class="form-label">Varian *</label>
-                            <select class="form-select" id="varian" name="varian" required>
-                                <option value="Original" <?= $produk['varian'] == 'Original' ? 'selected' : '' ?>>Original</option>
-                                <option value="Daun-Jeruk" <?= $produk['varian'] == 'Daun-Jeruk' ? 'selected' : '' ?>>Daun Jeruk</option>
-                                <option value="Keju" <?= $produk['varian'] == 'Keju' ? 'selected' : '' ?>>Keju</option>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label for="ukuran" class="form-label">Ukuran *</label>
-                            <select class="form-select" id="ukuran" name="ukuran" required>
-                                <option value="Kecil" <?= $produk['ukuran'] == 'Kecil' ? 'selected' : '' ?>>Kecil</option>
-                                <option value="Besar" <?= $produk['ukuran'] == 'Besar' ? 'selected' : '' ?>>Besar</option>
-                                <option value="Custom" <?= $produk['ukuran'] == 'Custom' ? 'selected' : '' ?>>Custom</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="harga" class="form-label">Harga (Rp) *</label>
-                            <div class="input-group">
-                                <span class="input-group-text">Rp</span>
-                                <input type="number" class="form-control" id="harga" name="harga" 
-                                       value="<?= $produk['harga'] ?>" min="1000" required>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label for="stok" class="form-label">Jumlah Stok *</label>
-                            <div class="input-group">
-                                <input type="number" class="form-control" id="stok" name="stok" 
-                                       value="<?= $produk['stok'] ?? 0 ?>" min="0" required>
-                                <span class="input-group-text">pcs</span>
-                            </div>
-                            <div class="form-text">Jumlah produk yang tersedia</div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                        <a href="produk.php" class="btn btn-secondary me-md-2">
-                            <i class="bi bi-arrow-left me-1"></i> Kembali
-                        </a>
-                        <button type="submit" class="btn btn-orange">
-                            <i class="bi bi-save me-1"></i> Simpan Perubahan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Info Produk -->
-    <div class="card mt-4">
-        <div class="card-body">
-            <h5 class="card-title mb-3">
-                <i class="bi bi-info-circle me-2"></i>Informasi Produk
+            <h5 class="card-title mb-4">
+                <i class="bi bi-cart-plus me-2"></i>Tambah Stok Produk
             </h5>
             
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card bg-light">
-                        <div class="card-body">
-                            <h6>Detail Produk:</h6>
-                            <p><strong>ID Produk:</strong> #<?= $produk['id'] ?></p>
-                            <p><strong>Varian:</strong> 
-                                <span class="badge <?php 
-                                    switch($produk['varian']) {
-                                        case 'Original': echo 'badge-original'; break;
-                                        case 'Daun-Jeruk': echo 'badge-daun-jeruk'; break;
-                                        case 'Keju': echo 'badge-keju'; break;
-                                        default: echo 'bg-secondary';
-                                    }
-                                ?>">
-                                    <?= htmlspecialchars($produk['varian']) ?>
-                                </span>
-                            </p>
-                            <p><strong>Ukuran:</strong> <?= htmlspecialchars($produk['ukuran']) ?></p>
-                            <p><strong>Harga Saat Ini:</strong> <span class="fw-bold text-success">Rp<?= number_format($produk['harga']) ?></span></p>
-                            <p><strong>Stok Saat Ini:</strong> <span class="fw-bold"><?= $produk['stok'] ?? 0 ?> pcs</span></p>
+            <form method="POST" action="">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="product_id" class="form-label">Pilih Produk *</label>
+                        <select class="form-select" id="product_id" name="product_id" required>
+                            <option value="">-- Pilih Produk --</option>
+                            <?php while ($produk = mysqli_fetch_assoc($result_produk)): 
+                                $badge_class = '';
+                                switch($produk['varian']) {
+                                    case 'Original': $badge_class = 'badge-original'; break;
+                                    case 'Daun-Jeruk': $badge_class = 'badge-daun-jeruk'; break;
+                                    case 'Keju': $badge_class = 'badge-keju'; break;
+                                    default: $badge_class = 'bg-secondary';
+                                }
+                            ?>
+                                <option value="<?= $produk['id'] ?>">
+                                    <?= htmlspecialchars($produk['nama']) ?> - 
+                                    <?= htmlspecialchars($produk['varian']) ?> - 
+                                    <?= htmlspecialchars($produk['ukuran']) ?> 
+                                    (Stok: <?= $produk['stok'] ?> pcs)
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="tambah_stok" class="form-label">Jumlah Stok yang Ditambahkan *</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="tambah_stok" name="tambah_stok" 
+                                   min="1" max="1000" value="" required>
+                            <span class="input-group-text">pcs</span>
                         </div>
+                        <div class="form-text">Masukkan jumlah stok yang ingin ditambahkan</div>
                     </div>
                 </div>
                 
-                <div class="col-md-6">
-                    <div class="card bg-light">
-                        <div class="card-body">
-                            <h6>Rekomendasi Stok:</h6>
-                            <div class="alert alert-info">
-                                <i class="bi bi-lightbulb me-2"></i>
-                                <strong>Saran:</strong> Set stok awal sesuai kebutuhan penjualan.<br>
-                                <small class="text-muted">
-                                    Contoh: 50 pcs untuk produk baru, 100 pcs untuk produk laris
-                                </small>
-                            </div>
-                            <div class="alert alert-warning">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                <strong>Perhatian:</strong> Pastikan stok cukup untuk memenuhi pesanan pelanggan.
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="produk.php" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Produk
+                    </a>
+                    <button type="submit" class="btn btn-orange">
+                        <i class="bi bi-save me-1"></i> Tambah Stok
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Daftar Produk -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">
+                <i class="bi bi-list-check me-2"></i>Daftar Produk Tersedia
+            </h5>
+            
+            <?php 
+            // Reset pointer result
+            mysqli_data_seek($result_produk, 0);
+            ?>
+            
+            <?php if (mysqli_num_rows($result_produk) > 0): ?>
+                <div class="row">
+                    <?php while ($produk = mysqli_fetch_assoc($result_produk)): 
+                        $badge_class = '';
+                        switch($produk['varian']) {
+                            case 'Original': $badge_class = 'badge-original'; break;
+                            case 'Daun-Jeruk': $badge_class = 'badge-daun-jeruk'; break;
+                            case 'Keju': $badge_class = 'badge-keju'; break;
+                            default: $badge_class = 'bg-secondary';
+                        }
+                    ?>
+                        <div class="col-md-6 mb-3">
+                            <div class="product-card">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1"><?= htmlspecialchars($produk['nama']) ?></h6>
+                                        <p class="mb-1">
+                                            <span class="badge <?= $badge_class ?> me-2">
+                                                <?= htmlspecialchars($produk['varian']) ?>
+                                            </span>
+                                            <span class="badge bg-light text-dark">
+                                                <?= htmlspecialchars($produk['ukuran']) ?>
+                                            </span>
+                                        </p>
+                                        <p class="mb-1">Rp<?= number_format($produk['harga']) ?></p>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="current-stock"><?= $produk['stok'] ?> pcs</div>
+                                        <div class="stok-info">Stok tersedia</div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-end">
+                                    <small class="text-muted">ID: #<?= $produk['id'] ?></small>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    <?php endwhile; ?>
                 </div>
-            </div>
+                
+                <div class="mt-3 text-muted">
+                    <small>
+                        <i class="bi bi-info-circle me-1"></i>
+                        Total <?= mysqli_num_rows($result_produk) ?> produk
+                    </small>
+                </div>
+            <?php else: ?>
+                <div class="text-center py-5">
+                    <i class="bi bi-box-seam" style="font-size: 4rem; color: #dee2e6;"></i>
+                    <h5 class="text-muted mt-3">Belum ada produk</h5>
+                    <p class="text-muted">Silakan tambah produk baru terlebih dahulu</p>
+                    <a href="produk.php" class="btn btn-orange btn-sm mt-2">
+                        <i class="bi bi-plus-circle me-2"></i>Kelola Produk
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -397,6 +410,13 @@ if (window.innerWidth < 768) {
     };
     
     header.parentNode.insertBefore(toggleBtn, header);
+}
+
+// Auto-select produk jika ada parameter URL
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id');
+if (productId) {
+    document.getElementById('product_id').value = productId;
 }
 </script>
 
