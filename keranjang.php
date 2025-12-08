@@ -194,6 +194,7 @@ $result = mysqli_query($conn, $query);
 
     <div class="mt-4 p-3 bg-white rounded shadow-sm">
         <h5 class="fw-bold">Total: Rp<?= number_format($total); ?></h5>
+
         <a href="checkout.php" class="btn btn-success mt-3 w-100">Checkout</a>
     </div>
 

@@ -22,6 +22,13 @@
         $username = "User"; // jika tidak ditemukan
         $profile_picture = 'images/default.jpg';
     }
+    
+    $count_query = "SELECT COUNT(*) as count FROM orders 
+                    WHERE user_id = $user_id 
+                    AND (status = 'Diproses' OR status = 'Menunggu Pembayaran' OR status = 'Menunggu Verifikasi')";
+    $count_result = mysqli_query($conn, $count_query);
+    $count_data = mysqli_fetch_assoc($count_result);
+    $diproses_count = $count_data['count'];
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +39,7 @@
     <title>Profile</title>
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbJTxI" crossorigin="anonymous"></script>
     <!-- Css -->
     <link rel="stylesheet" href="style.css">
     <!-- Icon -->
@@ -86,14 +93,6 @@
                             <a href="diproses.php" class="text-decoration-none text-dark d-flex flex-column align-items-center">
                                 <div class="position-relative">
                                     <i class="bi bi-box-seam menu-icon"></i>
-                                    <?php
-                                    // Hitung jumlah order diproses
-                                    $count_query = "SELECT COUNT(*) as count FROM orders 
-                                                    WHERE user_id = $user_id AND status = 'Diproses'";
-                                    $count_result = mysqli_query($conn, $count_query);
-                                    $count_data = mysqli_fetch_assoc($count_result);
-                                    $diproses_count = $count_data['count'];
-                                    ?>
                                     <?php if($diproses_count > 0): ?>
                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
                                             style="font-size: 0.6rem; padding: 4px 6px;">

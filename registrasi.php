@@ -5,7 +5,15 @@ if (isset($_POST['signup'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Enkripsi password (Wajib!)
+    if (strlen($password) < 6) {
+        echo "<script>
+                alert('Password harus minimal 6 karakter!');
+                window.history.back();
+              </script>";
+        exit;
+    }
+
+    // Enkripsi password
     $hashed = password_hash($password, PASSWORD_DEFAULT);
 
     // Query insert
@@ -13,9 +21,14 @@ if (isset($_POST['signup'])) {
     $result = mysqli_query($conn, $query);
 
     if ($result) {
-        echo "<script>alert('Akun berhasil dibuat');</script>";
+        echo "<script>
+                alert('Akun berhasil dibuat');
+                window.location.href = 'beranda.php';
+              </script>";
     } else {
-        echo "<script>alert('Gagal membuat akun');</script>";
+        echo "<script>
+                alert('Gagal membuat akun');
+              </script>";
     }
 }
 ?>
@@ -40,7 +53,6 @@ if (isset($_POST['signup'])) {
             min-height: 100vh;
             padding: 50px 0;
         }
-
     </style>
 </head>
 <body>
@@ -59,7 +71,10 @@ if (isset($_POST['signup'])) {
 
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <input type="password" name="password" class="form-control" required>
+                        <input type="password" name="password" class="form-control" required minlength="6">
+                        <div class="form-text">
+                            <small>Password minimal 6 karakter</small>
+                        </div>
                     </div>
 
                     <!-- Link ke Create account -->
@@ -82,6 +97,21 @@ if (isset($_POST['signup'])) {
         </div>
     </div>
 </div>
+
+<!-- ✅ VALIDASI SEDERHANA SAJA -->
+<script>
+document.querySelector('form').addEventListener('submit', function(event) {
+    const password = document.querySelector('input[name="password"]').value;
+    
+    if (password.length < 6) {
+        event.preventDefault();
+        alert('Password harus minimal 6 karakter!');
+        return false;
+    }
+    
+    return true;
+});
+</script>
 
 </body>
 </html>

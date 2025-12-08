@@ -63,6 +63,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                          $alamat_utama['kota'] . ", " .
                          $alamat_utama['provinsi'] . " " .
                          $alamat_utama['kode_pos'];
+
+        if($metode_pembayaran == 'DANA') {
+            $status = 'Menunggu Pembayaran';
+        } else if($metode_pembayaran == 'Cash on Delivery (COD)') {
+            $status = 'Diproses';
+        } else {
+            $status = 'Diproses';
+        }
         
         $stmt->bind_param("siisss", $order_number, $user_id, $total, $metode_pembayaran, $catatan, $alamat_display);
         
@@ -83,12 +91,36 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             // KOSONGKAN KERANJANG
             mysqli_query($conn, "DELETE FROM cart WHERE user_id = $user_id");
             
-            $success = "Pesanan berhasil dibuat! No. Order: $order_number";
-            
-            // Redirect ke halaman sukses atau profil
-            $_SESSION['success'] = $success;
-            header("location: profile.php");
-            exit;
+            if($metode_pembayaran == 'DANA') {
+                // Generate unique payment code
+                $payment_code = "DANA_" . time() . "_" . $order_id;
+                
+                // Simpan ke tabel payments
+                $payment_query = "INSERT INTO payments SET
+                    order_id = '$order_id',
+                    user_id = '$user_id',
+                    metode_pembayaran = 'Dana',
+                    payment_code = '$payment_code',
+                    amount = '$total',
+                    status = 'menunggu',
+                    created_at = NOW(),
+                    expires_at = DATE_ADD(NOW(), INTERVAL 1 HOUR)";
+                
+                mysqli_query($conn, $payment_query);
+
+                // Update status order juga ke 'Menunggu Pembayaran'
+                mysqli_query($conn, "UPDATE orders SET status = 'Menunggu Pembayaran' WHERE order_id = '$order_id'");
+                
+                // Redirect ke halaman pembayaran DANA
+                $_SESSION['success'] = "Pesanan berhasil dibuat! Silakan selesaikan pembayaran via DANA.";
+                header("location: payment_dana.php?order_id=" . $order_id);
+                exit;
+                
+            } else if($metode_pembayaran == 'COD' || $metode_pembayaran == 'Cash on Delivery (COD)') {
+                $_SESSION['success'] = "Pesanan berhasil dibuat! No. Order: $order_number";
+                header("location: diproses.php?success=1&order_id=" . $order_id);
+                exit;
+            }
         } else {
             $error = "Gagal membuat pesanan. Silakan coba lagi.";
         }
@@ -309,6 +341,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
                 </div>
+                <input type="hidden" name="total_harga" value="<?php echo $total; ?>">
                 
                 <!-- CATATAN PESANAN -->
                 <div class="mt-4">
