@@ -23,7 +23,7 @@ if (isset($_POST['signup'])) {
     if ($result) {
         echo "<script>
                 alert('Akun berhasil dibuat');
-                window.location.href = 'beranda.php';
+                window.location.href = 'login.php';
               </script>";
     } else {
         echo "<script>

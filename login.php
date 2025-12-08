@@ -15,10 +15,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($data && password_verify($password, $data['password'])) {
         $_SESSION['user_id'] = $data['user_id'];
-        $_SESSION['success'] = "Login berhasil! Selamat datang, $username";
-
-        header("Location: beranda.php");
-        exit;
+        $_SESSION['username'] = $data['username']; 
+        
+        // Cek jika user adalah admin
+        if (isset($data['role']) && $data['role'] === 'Admin') {
+            header("Location: admin/beranda_admin.php");
+            exit;
+        } else {
+            $_SESSION['success'] = "Login berhasil! Selamat datang, $username";
+            header("Location: beranda.php");
+            exit;
+        }
     } else {
         $error = "Username atau password salah!";
     }
