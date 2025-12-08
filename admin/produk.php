@@ -324,10 +324,12 @@ if (isset($_GET['delete'])) {
                                     <td class="fw-bold text-success">Rp<?= number_format($produk['harga']) ?></td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm">
+                                            <!-- Tombol Edit -->
                                             <a href="produk_edit.php?id=<?= $produk['id'] ?>" 
-                                               class="btn btn-warning" title="Edit">
+                                            class="btn btn-warning" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
+                                            <!-- Tombol Hapus -->
                                             <button type="button" class="btn btn-danger" 
                                                     data-bs-toggle="modal" data-bs-target="#deleteModal<?= $produk['id'] ?>"
                                                     title="Hapus">
