@@ -244,9 +244,7 @@ if (isset($_POST['update_status'])) {
         }
         
         .btn-logout {
-            background: rgba(224, 84, 15, 0.1);
-            border: 1px solid rgba(224, 84, 15, 0.3);
-            color: #e0540f;
+            color: black;
         }
         
         .btn-logout:hover {
