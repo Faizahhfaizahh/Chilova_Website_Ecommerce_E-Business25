@@ -330,7 +330,7 @@ if (isset($_POST['update_status'])) {
         <a href="pesanan.php" class="nav-link active">
             <i class="bi bi-cart-check"></i> Pesanan
         </a>
-        <a href="verifikasi.php" class="nav-link">
+        <a href="verifikasi_dana.php" class="nav-link">
             <i class="bi bi-cash-coin"></i> Verifikasi DANA
         </a>
         <a href="produk.php" class="nav-link">
