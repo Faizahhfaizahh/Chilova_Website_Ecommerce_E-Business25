@@ -332,9 +332,6 @@ $has_items = count($cart_items) > 0;
     <!-- Desktop View -->
     <div class="cart-item d-none-mobile">
         <div class="row align-items-center">
-            <div class="col-1">
-                <input type="checkbox" class="form-check-input" checked>
-            </div>
             <div class="col-2">
                 <img src="images/<?= $row['gambar']; ?>" class="product-img" alt="<?= $row['nama']; ?>">
             </div>
@@ -348,7 +345,7 @@ $has_items = count($cart_items) > 0;
             </div>
             <div class="col-3">
                 <div class="d-flex align-items-center gap-3">
-                    <button class="qty-btn updateQty" data-id="<?= $row['cart_id']; ?>" data-type="minus">−</button>
+                    <button class="qty-btn updateQty" data-id="<?= $row['cart_id']; ?>" data-type="minus">-</button>
                     <span class="fw-bold"><?= $row['qty']; ?></span>
                     <button class="qty-btn updateQty" data-id="<?= $row['cart_id']; ?>" data-type="plus">+</button>
                 </div>
@@ -363,9 +360,6 @@ $has_items = count($cart_items) > 0;
     <!-- Mobile View -->
     <div class="cart-item d-mobile" style="display: none;">
         <div class="mobile-row">
-            <div>
-                <input type="checkbox" class="form-check-input" checked>
-            </div>
             <img src="images/<?= $row['gambar']; ?>" class="product-img-sm" alt="<?= $row['nama']; ?>">
             <div class="mobile-info">
                 <h6 class="fw-bold mb-1"><?= $row['nama']; ?></h6>
@@ -428,7 +422,7 @@ $has_items = count($cart_items) > 0;
             </div>
             <div class="col-md-4 mt-3 mt-md-0">
                 <a href="checkout.php" class="btn btn-checkout w-100">
-                    <i class="bi bi-credit-card me-2"></i> Checkout
+                    <i class="bi bi-credit-card me-2"></i> Buat Pesanan
                 </a>
                 <div class="text-center mt-2">
                     <a href="beranda.php" class="text-decoration-none text-secondary">
