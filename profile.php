@@ -89,7 +89,7 @@
                     <h5 class="fw-bold mb-3">Pesanan Saya</h5>
                     <div class="row text-center">
                         <!-- DIPROSES (LINK KE profile_diproses.php) -->
-                        <div class="col-4 col-md-4 mb-4 menu-item">
+                        <div class="col-6 col-md-6 mb-6 menu-item">
                             <a href="diproses.php" class="text-decoration-none text-dark d-flex flex-column align-items-center">
                                 <div class="position-relative">
                                     <i class="bi bi-box-seam menu-icon"></i>
@@ -105,18 +105,10 @@
                         </div>
 
                         <!-- RIWAYAT (nanti buat profile_riwayat.php) -->
-                        <div class="col-4 col-md-4 mb-4 menu-item">
+                        <div class="col-6 col-md-6 mb-6 menu-item">
                             <a href="riwayat_pesanan.php" class="text-decoration-none text-dark d-flex flex-column align-items-center">
                                 <i class="bi bi-receipt menu-icon"></i>
                                 <p class="menu-label mb-0 mt-2">Riwayat</p>
-                            </a>
-                        </div>
-
-                        <!-- FAVORIT -->
-                        <div class="col-4 col-md-4 mb-4 menu-item">
-                            <a href="#" class="text-decoration-none text-dark d-flex flex-column align-items-center">
-                                <i class="bi bi-heart menu-icon"></i>
-                                <p class="menu-label mb-0 mt-2">Favorit</p>
                             </a>
                         </div>
                     </div>
