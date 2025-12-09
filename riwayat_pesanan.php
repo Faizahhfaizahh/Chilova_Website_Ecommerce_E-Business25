@@ -10,10 +10,10 @@ if(!isset($_SESSION['user_id'])){
 
 $user_id = $_SESSION['user_id'];
 
-// Ambil orders dengan status SELAIN 'Diproses'
+// Ambil orders dengan status hanya 'Selesai' dan 'Dibatalkan'
 $query = "SELECT * FROM orders 
           WHERE user_id = $user_id 
-          AND status IN ('Dikirim', 'Selesai', 'Dibatalkan')
+          AND status IN ('Selesai', 'Dibatalkan')
           ORDER BY tanggal_order DESC";
 $result = mysqli_query($conn, $query);
 ?>
@@ -39,11 +39,6 @@ $result = mysqli_query($conn, $query);
             font-size: 0.85rem;
             padding: 5px 12px;
             border-radius: 20px;
-        }
-        .status-dikirim {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
         }
         .status-selesai {
             background-color: #d4edda;
@@ -74,16 +69,18 @@ $result = mysqli_query($conn, $query);
         <div class="text-center py-5">
             <i class="bi bi-receipt" style="font-size: 4rem; color: #ddd;"></i>
             <h4 class="mt-3">Belum ada riwayat pesanan</h4>
-            <p class="text-muted">Pesanan yang sudah selesai akan muncul di sini</p>
+            <p class="text-muted">Pesanan yang sudah selesai atau dibatalkan akan muncul di sini</p>
         </div>
     <?php else: ?>
         <?php while($order = mysqli_fetch_assoc($result)): ?>
             <?php
             // Tentukan class badge berdasarkan status
             $status_class = '';
-            if($order['status'] == 'Dikirim') $status_class = 'status-dikirim';
-            elseif($order['status'] == 'Selesai') $status_class = 'status-selesai';
-            elseif($order['status'] == 'Dibatalkan') $status_class = 'status-dibatalkan';
+            if($order['status'] == 'Selesai') {
+                $status_class = 'status-selesai';
+            } elseif($order['status'] == 'Dibatalkan') {
+                $status_class = 'status-dibatalkan';
+            }
             ?>
             
             <div class="order-card">
@@ -107,19 +104,15 @@ $result = mysqli_query($conn, $query);
                 </div>
                 
                 <div class="text-end mt-3">
-                    <a href="#" class="btn btn-outline-secondary btn-sm">
+                    <a href="lihat_detail_riwayat.php?order_id=<?php echo $order['order_id']; ?>" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-eye me-1"></i> Lihat Detail
                     </a>
-                    <?php if($order['status'] == 'Selesai'): ?>
-                        <button class="btn btn-outline-primary btn-sm ms-2">
-                            <i class="bi bi-star me-1"></i> Beri Ulasan
-                        </button>
-                    <?php endif; ?>
                 </div>
             </div>
         <?php endwhile; ?>
     <?php endif; ?>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
