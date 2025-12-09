@@ -59,7 +59,7 @@
         <div class="container d-flex flex-column justify-content-center align-items-center h-100">
             <h1 class="display-3 fw-bold">Welcome to <span class="chilova-hero">Chilova</span> Website</h1>
             <p class="lead mb-4">Sahabat setia semua hidangan.</p>
-            <a href="#" class="btn btn-light btn-lg btn-cta">Shop Now</a>
+            <a href="login.php" class="btn btn-light btn-lg btn-cta">Shop Now</a>
         </div>
     </section>
 
