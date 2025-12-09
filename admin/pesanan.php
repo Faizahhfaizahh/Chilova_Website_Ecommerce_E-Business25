@@ -15,7 +15,6 @@ $query = "SELECT role FROM users WHERE user_id = '$user_id'";
 $result = mysqli_query($conn, $query);
 $user = mysqli_fetch_assoc($result);
 
-// Jika bukan admin, redirect ke beranda user
 if ($user['role'] !== 'Admin') {
     header("Location: ../beranda.php");
     exit;
