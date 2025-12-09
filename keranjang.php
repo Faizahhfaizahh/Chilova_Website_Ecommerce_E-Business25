@@ -417,10 +417,7 @@ $has_items = count($cart_items) > 0;
                     <span>Total Item (Quantity):</span>
                     <span class="fw-bold"><?= $total_qty; ?> produk</span>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>Jenis Produk:</span>
-                    <span class="fw-bold"><?= count($cart_items); ?> jenis</span>
-                </div>
+
                 <!-- =============================================================== -->
                 <div class="d-flex justify-content-between">
                     <span>Total Harga:</span>

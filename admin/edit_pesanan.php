@@ -21,10 +21,11 @@ if ($user['role'] !== 'Admin') {
 // Ambil ID pesanan dari parameter
 $order_id = isset($_GET['id']) ? mysqli_real_escape_string($conn, $_GET['id']) : 0;
 
-// Ambil data pesanan - HAPUS EMAIL
-$query_pesanan = "SELECT o.*, u.username 
+// Ambil data pesanan
+$query_pesanan = "SELECT o.*, u.username, p.proof_image, p.status 
                   FROM orders o 
                   JOIN users u ON o.user_id = u.user_id 
+                  LEFT JOIN payments p ON o.order_id = p.order_id 
                   WHERE o.order_id = '$order_id'";
 $result_pesanan = mysqli_query($conn, $query_pesanan);
 $pesanan = mysqli_fetch_assoc($result_pesanan);
@@ -34,6 +35,24 @@ if (!$pesanan) {
     header("Location: pesanan.php");
     exit;
 }
+
+
+// Tambahkan di awal setelah query pesanan
+echo "<!-- DEBUG: Raw proof_image from DB = " . $pesanan['proof_image'] . " -->";
+
+// Coba split path
+$proof_image = $pesanan['proof_image'];
+echo "<!-- DEBUG: Original value = " . $proof_image . " -->";
+
+// Jika sudah mengandung "uploads/"
+if (strpos($proof_image, 'uploads/') !== false) {
+    echo "<!-- DEBUG: Contains 'uploads/' -->";
+    // Ambil hanya nama file
+    $parts = explode('/', $proof_image);
+    $filename = end($parts);
+    echo "<!-- DEBUG: Filename only = " . $filename . " -->";
+}
+
 
 // Proses update status
 if (isset($_POST['update_status'])) {
@@ -194,6 +213,21 @@ if (isset($_POST['update_status'])) {
             color: #721c24;
         }
         
+        .badge-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge-verified {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
         .btn-orange {
             background-color: #e0540f;
             border-color: #e0540f;
@@ -235,6 +269,24 @@ if (isset($_POST['update_status'])) {
             background-color: rgba(224, 84, 15, 0.1);
         }
         
+        .bukti-pembayaran {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .bukti-pembayaran:hover {
+            transform: scale(1.02);
+        }
+        
+        .modal-image {
+            max-width: 100%;
+            height: auto;
+        }
+        
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -249,6 +301,21 @@ if (isset($_POST['update_status'])) {
     </style>
 </head>
 <body>
+
+<!-- Modal untuk tampilkan gambar full -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bukti Pembayaran DANA</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Bukti Pembayaran" class="modal-image">
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Sidebar -->
 <div class="sidebar d-none d-md-block">
@@ -352,6 +419,14 @@ if (isset($_POST['update_status'])) {
                             <strong>Metode Pembayaran:</strong><br>
                             <?php if ($pesanan['metode_pembayaran'] == 'DANA'): ?>
                                 <span class="badge bg-primary">DANA</span>
+                                <?php if ($pesanan['status']): ?>
+                                    <span class="badge-status <?= 
+                                        $pesanan['status'] == 'pending' ? 'badge-pending' : 
+                                        ($pesanan['status'] == 'verified' ? 'badge-verified' : 'badge-failed') 
+                                    ?>">
+                                        <?= ucfirst($pesanan['status']) ?>
+                                    </span>
+                                <?php endif; ?>
                             <?php else: ?>
                                 <span class="badge bg-secondary">COD</span>
                             <?php endif; ?>
@@ -398,6 +473,49 @@ if (isset($_POST['update_status'])) {
                             <span class="badge-status <?= $current_status_class ?>"><?= $current_status_text ?></span>
                         </div>
                     </div>
+                    
+                    <!-- Tampilkan Bukti Pembayaran untuk DANA -->
+<?php if ($pesanan['metode_pembayaran'] == 'DANA' && !empty($pesanan['proof_image'])): ?>
+<div class="mb-3">
+    <strong>Bukti Pembayaran DANA:</strong><br>
+    <div class="mt-2">
+        <?php
+        // Ambil nama file saja (karena di DB ada path lengkap)
+        $proof_image = $pesanan['proof_image'];
+        
+        // Ekstrak hanya nama file dari path
+        $filename = basename($proof_image); // atau: $parts = explode('/', $proof_image); $filename = end($parts);
+        
+        $imagePath = "../uploads/bukti_pembayaran/" . htmlspecialchars($filename);
+        $imageExists = file_exists($imagePath);
+        ?>
+        
+        
+        <?php if ($imageExists): ?>
+        <img src="<?= $imagePath ?>" 
+             alt="Bukti Pembayaran DANA" 
+             class="bukti-pembayaran"
+             style="max-height: 200px;"
+             data-bs-toggle="modal" 
+             data-bs-target="#imageModal"
+             onclick="showImageModal('<?= htmlspecialchars($filename) ?>')">
+        <p class="text-muted small mt-1">
+            <i class="bi bi-info-circle"></i> Klik gambar untuk memperbesar
+        </p>
+        <?php else: ?>
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            File <code><?= htmlspecialchars($filename) ?></code> tidak ditemukan di:<br>
+            <code>uploads/bukti_pembayaran/</code>
+            <p class="mb-0 mt-2">
+                <small>Coba cek manual apakah file ini ada di folder tersebut.</small>
+            </p>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
+
                     
                     <?php if (!empty($pesanan['alamat_pengiriman'])): ?>
                     <div class="mb-3">
@@ -520,6 +638,12 @@ if (isset($_POST['update_status'])) {
                         <div class="alert alert-warning">
                             <i class="bi bi-exclamation-triangle me-2"></i>
                             <strong>Catatan:</strong> Pesanan dengan metode DANA memerlukan verifikasi pembayaran terlebih dahulu sebelum diproses.
+                            <?php if (empty($pesanan['proof_image'])): ?>
+                                <div class="mt-2">
+                                    <i class="bi bi-exclamation-circle"></i> 
+                                    <strong>Perhatian:</strong> Belum ada bukti pembayaran yang diunggah
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <?php endif; ?>
                         
@@ -581,6 +705,21 @@ document.querySelectorAll('input[name="status"]').forEach(radio => {
         }
     });
 });
+
+// Fungsi untuk menampilkan gambar di modal
+function showImageModal(imageName) {
+    const modalImage = document.getElementById('modalImage');
+    // Sesuaikan path ini dengan struktur folder Anda
+    modalImage.src = '../uploads/bukti_pembayaran/' + imageName;
+    
+    // Optional: Tambahkan fallback jika gambar error
+    modalImage.onerror = function() {
+        this.src = '../images/no-image.jpg'; // Gambar default jika error
+        console.error('Gambar tidak ditemukan: ' + this.src);
+    };
+}
+// Inisialisasi modal untuk gambar
+const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
 </script>
 
 </body>
