@@ -342,7 +342,7 @@ if (isset($_POST['update_status'])) {
         <a href="profile_admin.php" class="nav-link">
             <i class="bi bi-person"></i> Profil Admin
         </a>
-        <a href="../login.php" class="nav-link mt-4" style="background-color: rgba(224, 84, 15, 0.1);">
+        <a href="../login.php" class="nav-link mt-4">
             <i class="bi bi-box-arrow-right"></i> Logout
         </a>
     </div>
