@@ -1,7 +1,6 @@
 <?php
 session_start();
 require "../koneksi.php";
-require "../function.php";
 
 // Cek apakah user sudah login dan adalah admin
 if (!isset($_SESSION['user_id'])) {
@@ -20,14 +19,20 @@ if ($user['role'] !== 'Admin') {
     exit;
 }
 
-// Filter status
+// Pesanan menunggu verifikasi (DANA) - SAMA SEPERTI DI BERANDA_ADMIN
+$query_verifikasi = "SELECT COUNT(*) as total_harga FROM orders WHERE metode_pembayaran = 'DANA' AND status = 'menunggu_verifikasi'";
+$result_verifikasi = mysqli_query($conn, $query_verifikasi);
+$menunggu_verifikasi = mysqli_fetch_assoc($result_verifikasi)['total_harga'];
+
+// Filter status - DIMODIFIKASI UNTUK KONSISTENSI
 $status_filter = isset($_GET['status']) ? $_GET['status'] : 'semua';
 $status_condition = "";
 if ($status_filter !== 'semua') {
+    // Gunakan status yang sama dengan beranda_admin.php
     $status_condition = "WHERE o.status = '$status_filter'";
 }
 
-// Ambil data pesanan dengan filter
+// Ambil data pesanan dengan filter - SAMA DENGAN BERANDA_ADMIN TAPI TANPA LIMIT
 $query_pesanan = "SELECT o.*, u.username 
                   FROM orders o 
                   JOIN users u ON o.user_id = u.user_id 
@@ -35,9 +40,9 @@ $query_pesanan = "SELECT o.*, u.username
                   ORDER BY o.tanggal_order DESC";
 $result_pesanan = mysqli_query($conn, $query_pesanan);
 
-// Hitung jumlah per status
+// Hitung jumlah per status - DIPERBAIKI AGAR KONSISTEN
 $query_count_all = "SELECT COUNT(*) as total FROM orders";
-$query_count_menunggu = "SELECT COUNT(*) as total FROM orders WHERE status = 'Menunggu Verifikasi'";
+$query_count_menunggu = "SELECT COUNT(*) as total FROM orders WHERE status = 'menunggu_verifikasi'"; // DIPERBAIKI: lowercase
 $query_count_diproses = "SELECT COUNT(*) as total FROM orders WHERE status = 'diproses'";
 $query_count_dikirim = "SELECT COUNT(*) as total FROM orders WHERE status = 'dikirim'";
 $query_count_selesai = "SELECT COUNT(*) as total FROM orders WHERE status = 'selesai'";
@@ -64,7 +69,7 @@ if (isset($_POST['update_status'])) {
     
     if (mysqli_query($conn, $update_query)) {
         $_SESSION['success'] = "Status pesanan berhasil diupdate!";
-        header("Location: pesanan.php");
+        header("Location: pesanan.php?status=" . urlencode($new_status));
         exit;
     } else {
         $_SESSION['error'] = "Gagal mengupdate status pesanan!";
@@ -186,6 +191,7 @@ if (isset($_POST['update_status'])) {
             font-weight: 600;
         }
         
+        /* STYLE SAMA DENGAN BERANDA_ADMIN.PHP */
         .badge-waiting {
             background-color: #fff3cd;
             color: #856404;
@@ -252,6 +258,10 @@ if (isset($_POST['update_status'])) {
             border-color: rgba(224, 84, 15, 0.4);
         }
         
+        .text-orange {
+            color: #e0540f;
+        }
+        
         .btn-orange {
             background-color: #e0540f;
             border-color: #e0540f;
@@ -296,7 +306,7 @@ if (isset($_POST['update_status'])) {
 </head>
 <body>
 
-<!-- Sidebar -->
+<!-- Sidebar - SAMA DENGAN BERANDA_ADMIN.PHP -->
 <div class="sidebar d-none d-md-block">
     <div class="sidebar-brand">
         <h4><i class="bi bi-shop me-2"></i>Chilova Admin</h4>
@@ -308,9 +318,15 @@ if (isset($_POST['update_status'])) {
         </a>
         <a href="pesanan.php" class="nav-link active">
             <i class="bi bi-cart-check"></i> Pesanan
+            <?php if ($menunggu_verifikasi > 0): ?>
+            <span class="badge bg-danger float-end"><?= $menunggu_verifikasi ?></span>
+            <?php endif; ?>
         </a>
         <a href="verifikasi_dana.php" class="nav-link">
             <i class="bi bi-cash-coin"></i> Verifikasi DANA
+            <?php if ($menunggu_verifikasi > 0): ?>
+            <span class="badge bg-danger float-end"><?= $menunggu_verifikasi ?></span>
+            <?php endif; ?>
         </a>
         <a href="produk.php" class="nav-link">
             <i class="bi bi-box-seam"></i> Produk
@@ -339,6 +355,7 @@ if (isset($_POST['update_status'])) {
                     <small class="text-muted">Administrator</small>
                 </div>
                 <?php
+                require "../function.php";
                 $user_id = $_SESSION['user_id'];
                 $profile_picture = getProfilePicturePath($user_id);
                 ?>
@@ -362,7 +379,7 @@ if (isset($_POST['update_status'])) {
                 <i class="bi bi-grid me-1"></i> Semua
                 <span class="badge bg-white text-dark ms-1"><?= $count_all ?></span>
             </a>
-            <a href="pesanan.php?status=menunggu verifikasi" 
+            <a href="pesanan.php?status=menunggu_verifikasi" 
                class="badge filter-badge <?= $status_filter === 'menunggu_verifikasi' ? 'active' : '' ?> bg-warning text-dark text-decoration-none px-3 py-2">
                 <i class="bi bi-clock me-1"></i> Menunggu Verifikasi
                 <span class="badge bg-white text-dark ms-1"><?= $count_menunggu ?></span>
@@ -451,11 +468,11 @@ if (isset($_POST['update_status'])) {
                     <?php if (mysqli_num_rows($result_pesanan) > 0): ?>
                         <?php while ($pesanan = mysqli_fetch_assoc($result_pesanan)): ?>
                             <?php
-                            // Format status badge
+                            // LOGIKA STATUS SAMA DENGAN BERANDA_ADMIN.PHP
                             $status_class = '';
                             $status_text = '';
                             switch ($pesanan['status']) {
-                                case 'Menunggu Verifikasi':
+                                case 'menunggu_verifikasi':
                                     $status_class = 'badge-waiting';
                                     $status_text = 'Verifikasi';
                                     break;
@@ -468,16 +485,12 @@ if (isset($_POST['update_status'])) {
                                     $status_text = 'Diproses';
                                     break;
                                 case 'dikirim':
-                                    $status_class = 'badge-shipped';
+                                    $status_class = 'badge-process';
                                     $status_text = 'Dikirim';
                                     break;
                                 case 'selesai':
                                     $status_class = 'badge-success';
                                     $status_text = 'Selesai';
-                                    break;
-                                case 'dibatalkan':
-                                    $status_class = 'badge-cancelled';
-                                    $status_text = 'Dibatalkan';
                                     break;
                                 default:
                                     $status_class = 'badge-secondary';
@@ -487,10 +500,6 @@ if (isset($_POST['update_status'])) {
                             <tr>
                                 <td>
                                     <strong><?= $pesanan['order_number'] ?></strong>
-                                    <?php if ($pesanan['order_number']): ?>
-                                        <br>
-                                        <small class="text-muted">Resi: <?= $pesanan['order_number'] ?></small>
-                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <div class="fw-bold"><?= $pesanan['username'] ?></div>
@@ -510,7 +519,9 @@ if (isset($_POST['update_status'])) {
                                 <td>
                                     <div class="btn-group btn-group-sm" role="group">
                                         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#detailModal<?= $pesanan['order_id'] ?>">
-                                            <i class="bi bi-eye"></i>
+                                            <a href="lihat_detail_pesanan.php?id=<?= $pesanan['order_id'] ?>" class="btn-outline-orange">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
                                         </button>
                                         <button type="button" class="btn btn-outline-orange" data-bs-toggle="modal" data-bs-target="#updateModal<?= $pesanan['order_id'] ?>">
                                             <a href="edit_pesanan.php?id=<?= $pesanan['order_id'] ?>" class="btn-outline-orange">
@@ -520,85 +531,7 @@ if (isset($_POST['update_status'])) {
                                     </div>
                                     
                                     <!-- Modal Detail -->
-                                    <div class="modal fade" id="detailModal<?= $pesanan['order_id'] ?>" tabindex="-1">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header modal-header-orange">
-                                                    <h5 class="modal-title">Detail Pesanan: <?= $pesanan['order_number'] ?></h5>
-                                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="row mb-3">
-                                                        <div class="col-md-6">
-                                                            <h6>Informasi Pelanggan</h6>
-                                                            <p class="mb-1"><strong>Nama:</strong> <?= $pesanan['username'] ?></p>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <h6>Informasi Pesanan</h6>
-                                                            <p class="mb-1"><strong>Tanggal:</strong> <?= date('d/m/Y H:i', strtotime($pesanan['tanggal_order'])) ?></p>
-                                                            <p class="mb-1"><strong>Metode:</strong> <?= $pesanan['metode_pembayaran'] ?></p>
-                                                            <p class="mb-1"><strong>Status:</strong> <span class="badge-status <?= $status_class ?>"><?= $status_text ?></span></p>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <h6>Alamat Pengiriman</h6>
-                                                    <p><?= $pesanan['alamat_pengiriman'] ?? 'Tidak ada data alamat' ?></p>
-                                                    
-                                                    <h6>Produk yang Dipesan</h6>
-                                                    <?php
-                                                    // Ambil detail produk dari order_items
-                                                    $order_id = $pesanan['order_id'];
-                                                    $query_items = "SELECT oi.*, p.nama, p.harga, p.gambar 
-                                                                   FROM order_items oi 
-                                                                   JOIN products p ON oi.product_id = p.id 
-                                                                   WHERE oi.order_id = '$order_id'";
-                                                    $result_items = mysqli_query($conn, $query_items);
-                                                    ?>
-                                                    <div class="table-responsive">
-                                                        <table class="table table-sm">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Produk</th>
-                                                                    <th>Harga</th>
-                                                                    <th>Qty</th>
-                                                                    <th>Subtotal</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <?php while ($item = mysqli_fetch_assoc($result_items)): ?>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <div class="d-flex align-items-center">
-                                                                                <?php if ($item['gambar']): ?>
-                                                                                    <img src="../images/<?= $item['gambar'] ?>" alt="<?= $item['nama'] ?>" class="me-2" style="width: 50px; height: 50px; object-fit: cover;">
-                                                                                <?php endif; ?>
-                                                                                <div>
-                                                                                    <div class="fw-bold"><?= $item['nama'] ?></div>
-                                                                                    <small class="text-muted">Varian: <?= $item['varian'] ?? '-' ?></small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>Rp<?= number_format($item['harga']) ?></td>
-                                                                        <td><?= $item['qty'] ?></td>
-                                                                        <td class="fw-bold">Rp<?= number_format($item['harga'] * $item['qty']) ?></td>
-                                                                    </tr>
-                                                                <?php endwhile; ?>
-                                                            </tbody>
-                                                            <tfoot>
-                                                                <tr>
-                                                                    <td colspan="3" class="text-end fw-bold">Total:</td>
-                                                                    <td class="fw-bold text-success">Rp<?= number_format($pesanan['total_harga']) ?></td>
-                                                                </tr>
-                                                            </tfoot>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+
                                     
                                     <!-- Modal Update Status -->
                                     <div class="modal fade" id="updateModal<?= $pesanan['order_id'] ?>" tabindex="-1">
@@ -622,7 +555,7 @@ if (isset($_POST['update_status'])) {
                                                         <div class="mb-3">
                                                             <label class="form-label">Update Status</label>
                                                             <select name="status" class="form-select" required>
-                                                                <option value="menunggu verifikasi" <?= $pesanan['status'] == 'menunggu verifikasi' ? 'selected' : '' ?>>Menunggu Verifikasi</option>
+                                                                <option value="menunggu_verifikasi" <?= $pesanan['status'] == 'menunggu_verifikasi' ? 'selected' : '' ?>>Menunggu Verifikasi</option>
                                                                 <option value="diproses" <?= $pesanan['status'] == 'diproses' ? 'selected' : '' ?>>Diproses</option>
                                                                 <option value="dikirim" <?= $pesanan['status'] == 'dikirim' ? 'selected' : '' ?>>Dikirim</option>
                                                                 <option value="selesai" <?= $pesanan['status'] == 'selesai' ? 'selected' : '' ?>>Selesai</option>
@@ -656,12 +589,30 @@ if (isset($_POST['update_status'])) {
                 </tbody>
             </table>
         </div>
+        
+        <!-- Pagination -->
+        <?php
+        $total_pesanan = mysqli_num_rows($result_pesanan);
+        if ($total_pesanan > 0): ?>
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <?php endif; ?>
     </div>
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Mobile Sidebar Toggle - SAMA DENGAN BERANDA_ADMIN.PHP -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Untuk mobile, kita bisa menambahkan toggle button
@@ -687,15 +638,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function filterTable() {
         const searchTerm = searchInput.value.toLowerCase();
+        let visibleCount = 0;
         
         tableRows.forEach(row => {
             const text = row.textContent.toLowerCase();
             if (text.includes(searchTerm)) {
                 row.style.display = '';
+                visibleCount++;
             } else {
                 row.style.display = 'none';
             }
         });
+        
+        // Update counter
+        const counterBadge = document.querySelector('.table-container h5 .badge');
+        if (counterBadge) {
+            counterBadge.textContent = visibleCount;
+        }
     }
     
     searchButton.addEventListener('click', filterTable);
