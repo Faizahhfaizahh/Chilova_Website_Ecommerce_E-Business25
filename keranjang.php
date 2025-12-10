@@ -341,6 +341,7 @@ $has_items = count($cart_items) > 0;
                     <span class="badge-variant"><?= $row['varian']; ?></span>
                     <small class="text-muted"><?= $row['ukuran']; ?></small>
                 </div>
+                <div class="text-stock">Stok: <?= $row['stok']; ?></div>
                 <div class="text-price">Rp<?= number_format($row['harga']); ?></div>
             </div>
             <div class="col-3">
@@ -367,6 +368,7 @@ $has_items = count($cart_items) > 0;
                     <span class="badge-variant"><?= $row['varian']; ?></span>
                     <small class="text-muted"><?= $row['ukuran']; ?></small>
                 </div>
+                <div class="text-stock">Stok: <?= $row['stok']; ?></div>
                 <div class="text-price">Rp<?= number_format($row['harga']); ?></div>
             </div>
         </div>
