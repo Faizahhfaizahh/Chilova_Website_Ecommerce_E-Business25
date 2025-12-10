@@ -41,9 +41,9 @@ $result_pendapatan = mysqli_query($conn, $query_pendapatan);
 $pendapatan_bulan_ini = mysqli_fetch_assoc($result_pendapatan)['total_harga'] ?? 0;
 
 // Total produk
-$query_produk = "SELECT COUNT(*) as harga FROM products";
-$result_produk = mysqli_query($conn, $query_produk);
-$total_produk = mysqli_fetch_assoc($result_produk)['harga'];
+$query_stok = "SELECT SUM(stok) as total_stok FROM products";
+$result_stok = mysqli_query($conn, $query_stok);
+$total_stok = mysqli_fetch_assoc($result_stok)['total_stok'];
 
 // Ambil pesanan terbaru (5 pesanan)
 $query_pesanan_terbaru = "SELECT o.*, u.username 
@@ -369,8 +369,8 @@ $pesanan_terbaru = mysqli_query($conn, $query_pesanan_terbaru);
                 <div class="stat-icon" style="background-color: rgba(156, 39, 176, 0.1); color: #9c27b0;">
                     <i class="bi bi-box"></i>
                 </div>
-                <div class="stat-number"><?= $total_produk ?></div>
-                <div class="stat-text">Total Produk</div>
+                <div class="stat-number"><?= $total_stok ?></div>
+                <div class="stat-text">Stok Produk</div>
             </div>
         </div>
     </div>
