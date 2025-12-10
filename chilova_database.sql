@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 08, 2025 at 11:15 AM
+-- Generation Time: Dec 10, 2025 at 03:13 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -60,6 +60,13 @@ CREATE TABLE `cart` (
   `qty` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`id`, `user_id`, `product_id`, `qty`) VALUES
+(57, 1, 4, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -90,9 +97,11 @@ INSERT INTO `orders` (`order_id`, `order_number`, `user_id`, `total_harga`, `met
 (12, 'ORD20251207102816909', 1, 24000, 'Cash on Delivery (COD)', '', 'Diproses', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-07 17:28:16'),
 (13, 'ORD20251207102920436', 1, 15000, 'Cash on Delivery (COD)', '', 'Diproses', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-07 17:29:20'),
 (14, 'ORD20251207103711313', 1, 27000, 'Cash on Delivery (COD)', '', 'Diproses', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-07 17:37:11'),
-(16, 'ORD20251208012137452', 1, 12000, 'DANA', '', 'Menunggu Verifikasi', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-08 08:21:37'),
-(17, 'ORD20251208072221370', 1, 27000, 'DANA', '', 'Menunggu Pembayaran', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-08 14:22:21'),
-(18, 'ORD20251208110812823', 1, 39000, 'DANA', '', 'Menunggu Pembayaran', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-08 18:08:12');
+(16, 'ORD20251208012137452', 1, 12000, 'DANA', '', 'Diproses', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-08 08:21:37'),
+(17, 'ORD20251208072221370', 1, 27000, 'DANA', '', 'Diproses', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-08 14:22:21'),
+(18, 'ORD20251208110812823', 1, 39000, 'DANA', '', 'Dikirim', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-08 18:08:12'),
+(19, 'ORD20251209105128564', 1, 42000, 'Cash on Delivery (COD)', '', 'Diproses', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-09 17:51:28'),
+(20, 'ORD20251209105956917', 1, 12000, 'DANA', '', 'Selesai', 'Coco - +62 819 9940 0112\nJempong Timur gang H.Yasin, Mataram, Nusa Tenggara Barat 83117', '2025-12-09 17:59:56');
 
 -- --------------------------------------------------------
 
@@ -139,7 +148,11 @@ INSERT INTO `order_item` (`item_id`, `order_id`, `product_id`, `nama_produk`, `v
 (20, 17, 6, 'Lengkuas', 'Lengkuas', '', 15000, 1, 15000),
 (21, 17, 3, 'Daun Jeruk', 'Daun Jeruk', '', 12000, 1, 12000),
 (22, 18, 1, 'Original', 'Original', '', 12000, 2, 24000),
-(23, 18, 2, 'Original', 'Original', '', 15000, 1, 15000);
+(23, 18, 2, 'Original', 'Original', '', 15000, 1, 15000),
+(24, 19, 3, 'Daun Jeruk', 'Daun Jeruk', '', 12000, 1, 12000),
+(25, 19, 4, 'Daun Jeruk', 'Daun Jeruk', '', 15000, 1, 15000),
+(26, 19, 6, 'Lengkuas', 'Lengkuas', '', 15000, 1, 15000),
+(27, 20, 1, 'Original', 'Original', '', 12000, 1, 12000);
 
 -- --------------------------------------------------------
 
@@ -177,7 +190,8 @@ INSERT INTO `payments` (`payment_id`, `order_id`, `user_id`, `metode_pembayaran`
 (8, 15, 1, '', 'DANA_1765152733_15', 36000.00, 'menunggu verifikasi', 'uploads/bukti_pembayaran/DANA_ORD20251208011213949_1765152757.png', 'ORDER_ORD20251208011213949', '2025-12-08 08:12:13', '2025-12-08 09:12:13', 0),
 (9, 16, 1, '', 'DANA_1765153297_16', 12000.00, 'menunggu verifikasi', 'uploads/bukti_pembayaran/DANA_ORD20251208012137452_1765153576.png', 'Order_ORD20251208012137452', '2025-12-08 08:21:37', '2025-12-08 09:21:37', 0),
 (10, 17, 1, 'Dana', 'DANA_1765174941_17', 27000.00, '', '', '', '2025-12-08 14:22:21', '2025-12-08 15:22:21', 0),
-(11, 18, 1, 'Dana', 'DANA_1765188492_18', 39000.00, '', '', '', '2025-12-08 18:08:12', '2025-12-08 19:08:12', 0);
+(11, 18, 1, 'Dana', 'DANA_1765188492_18', 39000.00, '', '', '', '2025-12-08 18:08:12', '2025-12-08 19:08:12', 0),
+(12, 20, 1, '', 'DANA_1765274396_20', 12000.00, 'menunggu verifikasi', 'uploads/bukti_pembayaran/DANA_ORD20251209105956917_1765274429.png', 'ORDER_ORD20251209105956917', '2025-12-09 17:59:56', '2025-12-09 18:59:56', 0);
 
 -- --------------------------------------------------------
 
@@ -202,9 +216,9 @@ CREATE TABLE `products` (
 INSERT INTO `products` (`id`, `nama`, `varian`, `ukuran`, `harga`, `gambar`, `stok`) VALUES
 (1, 'Original', 'Original', '100g', 12000, 'original.png', 5),
 (2, 'Original', 'Original', '150g', 15000, 'original.png', 7),
-(3, 'Daun Jeruk', 'Daun Jeruk', '100g', 12000, 'daun jeruk.png', 5),
+(3, 'Daun Jeruk', 'Daun Jeruk', '100g', 12000, 'daun jeruk.png', 6),
 (4, 'Daun Jeruk', 'Daun Jeruk', '150g', 15000, 'daun jeruk.png', 10),
-(5, 'Lengkuas', 'Lengkuas', '100g', 12000, 'lengkuas.png', 3),
+(5, 'Lengkuas', 'Lengkuas', '100g', 12000, 'lengkuas.png', 6),
 (6, 'Lengkuas', 'Lengkuas', '150g', 15000, 'lengkuas.png', 10);
 
 -- --------------------------------------------------------
@@ -217,7 +231,7 @@ CREATE TABLE `users` (
   `user_id` int(12) NOT NULL,
   `username` text NOT NULL,
   `password` text NOT NULL,
-  `role` enum('Admin','User') NOT NULL,
+  `role` enum('Admin','User') NOT NULL DEFAULT 'User',
   `profile_picture` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -226,9 +240,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `password`, `role`, `profile_picture`) VALUES
-(1, 'chilova', '$2y$10$xNBo.AA8gCEF37UnzazOYOmeLzI1sHt1t0RQO9AuVQzT/mZ85Aeji', 'User', 'profile_1_1765077292.jpg'),
+(1, 'chilova', '$2y$10$JEUk.ushrAHXNNfHAQeInucgXbmB/0h1Vhb7GHZnbUKq4v3VdzeQa', 'User', 'profile_1_1765077292.jpg'),
 (2, 'faizah', '$2y$10$PIkiMx0Gj3zqI/e3Aw1nZ.4oIGTD9Xap3XvqGFVsNVUVEElOOTvcK', 'User', 'default.jpg'),
-(3, 'admin chilova', '$2y$10$BloUofuLbDK578MiA8SkzuO43esbJl1A2HgayeEp/FXuOGfITRXcO', 'Admin', 'default.jpg');
+(3, 'admin chilova', '$2y$10$BloUofuLbDK578MiA8SkzuO43esbJl1A2HgayeEp/FXuOGfITRXcO', 'Admin', 'profile_3_1765327139.png');
 
 --
 -- Indexes for dumped tables
@@ -292,25 +306,25 @@ ALTER TABLE `alamat`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `order_item`
 --
 ALTER TABLE `order_item`
-  MODIFY `item_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `item_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `products`
