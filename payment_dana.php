@@ -207,7 +207,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['bukti_pembayaran'])) {
         <div class="dana-info text-center">
             <h4><i class="bi bi-phone me-2"></i> Kirim ke Nomor DANA:</h4>
             <h1 class="fw-bold mb-3">0877-4577-0076</h1>
-            <p class="mb-0">a/n <strong>TOKO BAKTI JAYA</strong></p>
+            <p class="mb-0">a/n <strong>CHILOVA</strong></p>
             <p class="mb-0">Pastikan nomor dan nama penerima sudah benar!</p>
         </div>
 
@@ -253,7 +253,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['bukti_pembayaran'])) {
                     <div>
                         <h5 class="fw-bold mb-1">Masukkan Nomor DANA</h5>
                         <p class="mb-0">Masukkan nomor: <strong>0877-4577-0076</strong></p>
-                        <p class="mb-0">Pastikan nama penerima: <strong>TOKO BAKTI JAYA</strong></p>
+                        <p class="mb-0">Pastikan nama penerima: <strong>QHAULAN SYAQILA</strong></p>
                     </div>
                 </div>
             </div>
