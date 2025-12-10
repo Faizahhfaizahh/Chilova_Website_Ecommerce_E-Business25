@@ -192,7 +192,7 @@ if (isset($_GET['delete'])) {
         <a href="profile_admin.php" class="nav-link">
             <i class="bi bi-person"></i> Profil Admin
         </a>
-        <a href="../logout.php" class="nav-link mt-4">
+        <a href="../login.php" class="nav-link btn-logout mt-4">
             <i class="bi bi-box-arrow-right"></i> Logout
         </a>
     </div>
@@ -288,6 +288,7 @@ if (isset($_GET['delete'])) {
                                 <th>Varian</th>
                                 <th>Ukuran</th>
                                 <th>Harga</th>
+                                <th>Stok</th>
                                 <th width="120" class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -322,6 +323,7 @@ if (isset($_GET['delete'])) {
                                     </td>
                                     <td><?= htmlspecialchars($produk['ukuran']) ?></td>
                                     <td class="fw-bold text-success">Rp<?= number_format($produk['harga']) ?></td>
+                                    <td><?= htmlspecialchars($produk['stok']) ?></td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm">
                                             <!-- Tombol Edit -->
